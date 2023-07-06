@@ -15,17 +15,15 @@
         <div class="hospital">
           <Card class="item" v-for="item in 10" :key="item" />
           <!-- 分页器 -->
-          <el-pagination
-            v-model:current-page="pageNo"
-            v-model:page-size="pageSize"
-            :page-sizes="[10, 20, 30, 40]"
-            :background="true"
-            layout=" prev, pager, next, jumper, ->,sizes,total"
-            :total="400"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
         </div>
+        <el-pagination
+          v-model:current-page="pageNo"
+          v-model:page-size="pageSize"
+          :page-sizes="[10, 20, 30, 40]"
+          :background="true"
+          layout=" prev, pager, next, jumper,->,sizes,total"
+          :total="20"
+        />
       </el-col>
       <el-col :span="4">456</el-col>
     </el-row>
