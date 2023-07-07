@@ -30,6 +30,7 @@
           layout=" prev, pager, next, jumper,->,sizes,total"
           :total="total"
           @current-change="currentChange"
+          @size-change="sizeChange"
         />
       </el-col>
       <el-col :span="4">456</el-col>
@@ -56,7 +57,7 @@ import Card from "./card/index.vue";
 // 分页器当前页面
 let pageNo = ref<number>(1);
 // 一页展示几条数据
-let pageSize = ref<number>(10);
+let pageSize = ref<number>(5);
 // 存储已有的医院数据
 let hasHospitalArr = ref([]);
 // 存储医院总个数
@@ -80,6 +81,16 @@ const getHospitalInfo = async () => {
 };
 
 // 分页器页码发生变化时后的回调
+const currentChange = () => {
+  getHospitalInfo();
+};
+// 分页器下拉菜单发生变化时触发
+const sizeChange = () => {
+  // 当前页面归第一页
+  pageNo.value = 1;
+  // 再次发请求获取医院的数据
+  getHospitalInfo();
+};
 </script>
 
 <style scoped lang="scss">
