@@ -4,20 +4,62 @@
     <div class="content">
       <div class="left">等级:</div>
       <ul class="hospital">
-        <li class="active">全部</li>
-        <li>三级甲等</li>
-        <li>三级甲等</li>
-        <li>三级甲等</li>
-        <li>三级甲等</li>
-        <li>三级甲等</li>
-        <li>三级甲等</li>
-        <li>三级甲等</li>
+        <!-- 默认全部为空字符串 ''   -->
+        <li :class="{ active: activeFlag == '' }" @click="changeLevel('')">
+          全部
+        </li>
+        <li
+          v-for="level in levelArr"
+          :class="{ active: activeFlag == level.value }"
+          :key="level.value"
+          @click="changeLevel(level.value)"
+        >
+          {{ level.name }}
+        </li>
       </ul>
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { reqHospitalLevelAndRegion } from "@/api/home";
+import { onMounted, ref } from "vue";
+import type {
+  HospitalLevelAndRegionResponseData,
+  HospitalLevelAndRegionArr,
+} from "@/api/home/type";
+// 定义一个数组存储医院等级的数据
+let levelArr = ref<HospitalLevelAndRegionArr>([]);
+// 控制医院等级高亮响应式数据
+let activeFlag = ref<string>("");
+// 组件挂载完毕
+onMounted(() => {
+  getLevel();
+});
+// 获取医院等级数据
+const getLevel = async () => {
+  let result: HospitalLevelAndRegionResponseData =
+    await reqHospitalLevelAndRegion("HosType");
+  // 存储医院等级的数据
+  if (result.code == 200) {
+    levelArr.value = result.data;
+  }
+};
+
+// 点击等级按钮回调
+const changeLevel = (level: string) => {
+  console.log(level);
+  // 高亮响应式数据存储level数值
+  activeFlag.value = level;
+};
+</script>
+
+<script lang="ts">
+// 用vue2写个别名，方便vue插件寻找数据
+export default {
+  name: "Level",
+};
+</script>
 
 <style scoped lang="scss">
 .level {
