@@ -32,6 +32,8 @@ import type {
 let levelArr = ref<HospitalLevelAndRegionArr>([]);
 // 控制医院等级高亮响应式数据
 let activeFlag = ref<string>("");
+
+
 // 组件挂载完毕
 onMounted(() => {
   getLevel();
@@ -48,7 +50,7 @@ const getLevel = async () => {
 
 // 点击等级按钮回调
 const changeLevel = (level: string) => {
-  console.log(level);
+  // console.log(level);
   // 高亮响应式数据存储level数值
   activeFlag.value = level;
 };

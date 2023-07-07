@@ -81,7 +81,7 @@ export interface HospitalLevelAndRegion {
   dictCode: string;
   hasChildren: boolean;
 }
-
+// 存储全部已有医院等级数组类型
 export type HospitalLevelAndRegionArr = HospitalLevelAndRegion[];
 // 获取等级或者医院地区接口返回的数据类型
 export interface HospitalLevelAndRegionResponseData extends ResponseData {
