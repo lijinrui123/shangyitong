@@ -13,7 +13,13 @@
         <Region />
         <!-- 展示医院的结构 -->
         <div class="hospital">
-          <Card class="item" v-for="item in 10" :key="item" />
+          <!-- :hospitalInfo="item"给子组件card传送数据 -->
+          <Card
+            class="item"
+            v-for="(item, index) in hasHospitalArr"
+            :key="index"
+            :hospitalInfo="item"
+          />
           <!-- 分页器 -->
         </div>
         <el-pagination
@@ -22,7 +28,8 @@
           :page-sizes="[10, 20, 30, 40]"
           :background="true"
           layout=" prev, pager, next, jumper,->,sizes,total"
-          :total="20"
+          :total="total"
+          @current-change="currentChange"
         />
       </el-col>
       <el-col :span="4">456</el-col>
@@ -31,6 +38,9 @@
 </template>
 
 <script setup lang="ts">
+// 引入组合式API函数
+import { onMounted, ref } from "vue";
+import { reqHospital } from "@/api/home";
 // 引入首页轮播图组件
 import Carousel from "./carousel/index.vue";
 // 引入首页搜索的组件
@@ -42,11 +52,34 @@ import Region from "./region/index.vue";
 // 展示医院的卡片组件
 import Card from "./card/index.vue";
 // 分页器需要的数据
-import { ref } from "vue";
+// import { ref } from "vue";
 // 分页器当前页面
 let pageNo = ref<number>(1);
 // 一页展示几条数据
 let pageSize = ref<number>(10);
+// 存储已有的医院数据
+let hasHospitalArr = ref([]);
+// 存储医院总个数
+let total = ref(0);
+
+// 组件挂载完毕，发一次请求
+onMounted(() => {
+  getHospitalInfo();
+});
+// 获取已有的医院数据
+const getHospitalInfo = async () => {
+  // 获取医院的数据：默认获取第一页、一页十个医院的数据
+  let result: any = await reqHospital(pageNo.value, pageSize.value);
+  if (result.code == 200) {
+    // 存储已有的医院数据
+    hasHospitalArr.value = result.data.content;
+    // 存储医院总个数
+    total.value = result.data.totalElements;
+    console.log(result);
+  }
+};
+
+// 分页器页码发生变化时后的回调
 </script>
 
 <style scoped lang="scss">

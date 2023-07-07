@@ -22,7 +22,7 @@ request.interceptors.request.use((config) => {
 request.interceptors.response.use(
   (response) => {
     // 响应拦截器成功地回调，一般会进行简化
-    return response;
+    return response.data;
   },
   (error) => {
     // 处理http网络错误
@@ -33,7 +33,7 @@ request.interceptors.response.use(
         ElMessage({
           type: "error",
           //   message: error.message,
-          message: "请求失败路径,出现问题",
+          message: "请求失败,路径出现问题",
         });
         break;
       case 401:

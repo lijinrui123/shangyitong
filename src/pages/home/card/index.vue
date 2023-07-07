@@ -4,7 +4,7 @@
     <el-card class="box-card" shadow="hover">
       <div class="content">
         <div class="left">
-          <div class="hospital_name">北京医院</div>
+          <div class="hospital_name">{{ hospitalInfo.hosname }}</div>
           <div class="tip">
             <div class="level">
               <svg
@@ -22,7 +22,7 @@
                   p-id="4862"
                 ></path>
               </svg>
-              <span>三级甲等</span>
+              <span>{{ hospitalInfo.param.hostypeString }}</span>
             </div>
             <div class="time">
               <svg
@@ -41,19 +41,26 @@
                   p-id="3776"
                 ></path>
               </svg>
-              <span>2023</span>
+              <span>每天{{ hospitalInfo.bookingRule.releaseTime }}放号</span>
             </div>
           </div>
         </div>
         <div class="right">
-          <img src="../../../assets//images//logo.png" alt="" />
+          <!-- // ``模版字符串 -->
+          <img
+            :src="`data:image/jpeg;base64,${hospitalInfo.logoData}`"
+            alt=""
+          />
         </div>
       </div>
     </el-card>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+// 接收父组件:hospitalInfo="item"传递过来的props->即为已有的医院的数据
+defineProps(["hospitalInfo"]);
+</script>
 
 <style scoped lang="scss">
 .content {
