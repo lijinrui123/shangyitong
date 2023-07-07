@@ -49,7 +49,10 @@ const getRegion = async () => {
 const changeRegion = (region: string) => {
   // 高亮响应式数据存储region数值
   RegionFlag.value = region;
+  // 给父组件传递区域的参数
+  $emit("getRegion", region);
 };
+let $emit = defineEmits(["getRegion"]);
 </script>
 
 <script lang="ts">

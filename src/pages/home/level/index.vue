@@ -33,7 +33,6 @@ let levelArr = ref<HospitalLevelAndRegionArr>([]);
 // 控制医院等级高亮响应式数据
 let activeFlag = ref<string>("");
 
-
 // 组件挂载完毕
 onMounted(() => {
   getLevel();
@@ -53,7 +52,12 @@ const changeLevel = (level: string) => {
   // console.log(level);
   // 高亮响应式数据存储level数值
   activeFlag.value = level;
+  // 触发自定义事件：将医院等级参数传回给父组件
+  // 触发getLevel事件，回传level数据
+  $emit('getLevel',level)
 };
+// 触发getLevel事件
+let $emit = defineEmits(["getLevel"]);
 </script>
 
 <script lang="ts">
