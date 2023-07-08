@@ -61,13 +61,17 @@
 import { useRouter } from "vue-router";
 // 获取路由对象
 let $router = useRouter();
-// 点击医院卡片时跳转到医院详情页面
-const goDetail = () => {
-  $router.push({ path: "/hospital" });
-  console.log(props);
-};
 // 接收父组件:hospitalInfo="item"传递过来的props->即为已有的医院的数据
 let props = defineProps(["hospitalInfo"]);
+// 点击医院卡片时跳转到医院详情页面
+const goDetail = () => {
+  $router.push({
+    path: "/hospital/register",
+    query: { hoscode: props.hospitalInfo.hoscode },
+  });
+  // console.log(props);
+};
+// console.log(props.hospitalInfo);
 </script>
 
 <style scoped lang="scss">

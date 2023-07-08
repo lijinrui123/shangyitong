@@ -22,7 +22,7 @@ import { ref } from "vue";
 // 引入请求方法
 import { reqHospitalInfo } from "@/api/home";
 // 引入ts数据类型
-import type { HospitalInfo, Content } from "@/api/home/type";
+import type { HospitalInfo } from "@/api/home/type";
 // 创建路由对象
 let $router = useRouter();
 let hosname = ref<string>("");
@@ -47,7 +47,10 @@ const fetchData = async (keyword: string, cb: any) => {
 const goDetail = (item: any) => {
   // console.log(item);
   // 点击推荐项进入医院详情页，将来需要携带query参数（医院的编码）
-  $router.push({ path: "/hospital" });
+  $router.push({
+    path: "/hospital/register",
+    query: { hoscode: item.hoscode },
+  });
 };
 </script>
 <script lang="ts">
