@@ -34,7 +34,9 @@
           @size-change="sizeChange"
         />
       </el-col>
-      <el-col :span="4">456</el-col>
+      <el-col :span="4">
+        <Tip />
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -53,6 +55,8 @@ import Level from "./level/index.vue";
 import Region from "./region/index.vue";
 // 展示医院的卡片组件
 import Card from "./card/index.vue";
+// 引入右侧的组件
+import Tip from "./tip/index.vue";
 import type { Content, hospitalResponseData } from "@/api/home/type";
 // 分页器需要的数据
 // import { ref } from "vue";
