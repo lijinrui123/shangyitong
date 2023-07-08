@@ -42,7 +42,8 @@
 </template>
 
 <script setup lang="ts">
-// import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import useDetailStore from "@/store/modules/hospitalDetail";
 import { useRoute } from "vue-router";
 // 左侧菜单图标
 import {
@@ -53,8 +54,16 @@ import {
   Search,
   Message,
 } from "@element-plus/icons-vue";
+
+// 获取仓库对象
+let detailStore = useDetailStore();
+
 // 互殴当前的路由信息
 let $route = useRoute();
+// 组件挂载完毕：通知pinia仓库发请求获取医院详情的数据，存储仓库当中
+onMounted(() => {
+  detailStore.getHospital($route.query.hoscode);
+});
 </script>
 
 <style scoped lang="scss">
