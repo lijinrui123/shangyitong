@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 鼠标经过出现阴影效果shadow="hover" -->
-    <el-card class="box-card" shadow="hover">
+    <el-card class="box-card" shadow="hover" @click="goDetail">
       <div class="content">
         <div class="left">
           <div class="hospital_name">{{ hospitalInfo.hosname }}</div>
@@ -58,8 +58,16 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from "vue-router";
+// 获取路由对象
+let $router = useRouter();
+// 点击医院卡片时跳转到医院详情页面
+const goDetail = () => {
+  $router.push({ path: "/hospital" });
+  console.log(props);
+};
 // 接收父组件:hospitalInfo="item"传递过来的props->即为已有的医院的数据
-defineProps(["hospitalInfo"]);
+let props = defineProps(["hospitalInfo"]);
 </script>
 
 <style scoped lang="scss">
