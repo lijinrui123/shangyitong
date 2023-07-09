@@ -9,7 +9,7 @@
       <!-- 右侧 -->
       <div class="right">
         <div class="help">帮助中心</div>
-        <div class="login">登录/注册</div>
+        <div class="login" @click="login">登录/注册</div>
       </div>
     </div>
   </div>
@@ -18,10 +18,19 @@
 <script setup lang="ts">
 // 引入路由器
 import { useRouter } from "vue-router";
+// 获取user仓库的数据visiable，可以控制login组件的对话框显示与隐藏
+import useUserStore from "@/store/modules/user";
+let userStore = useUserStore();
+
 let $router = useRouter();
 const goHome = () => {
   // 编程式导航跳回到首页
   $router.push({ path: "/home" });
+};
+
+// 点击登录与注册按钮的时候弹出对话框
+const login = () => {
+  userStore.visiable = true;
 };
 </script>
 

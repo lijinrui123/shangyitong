@@ -11,6 +11,8 @@
     <!-- 底部全局组件 -->
     <HospitalBottom />
   </div>
+  <!-- 登陆组件 -->
+  <Login />
 </template>
 
 <script setup lang="ts">

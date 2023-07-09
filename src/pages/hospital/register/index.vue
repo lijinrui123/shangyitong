@@ -105,7 +105,11 @@
           <h1 class="cur">{{ deparment.depname }}</h1>
           <!-- 每一个大的科室下小科室 -->
           <ul>
-            <li v-for="item in deparment.children" :key="item.depcode">
+            <li
+              @click="Showlogin"
+              v-for="item in deparment.children"
+              :key="item.depcode"
+            >
               {{ item.depname }}
             </li>
           </ul>
@@ -119,6 +123,9 @@
 import { ref } from "vue";
 // 引入医院详情仓库的数据
 import useDetailStore from "@/store/modules/hospitalDetail";
+// 获取user仓库的数据visiable，可以控制login组件的对话框显示与隐藏
+import useUserStore from "@/store/modules/user";
+let userStore = useUserStore();
 let hospitalStore = useDetailStore();
 // 控制科室高亮的响应式数据
 let currentIndex = ref<number>(0);
@@ -130,9 +137,13 @@ const changeIndex = (index: number) => {
   // console.log(allH1);
   // 滚动到对应科室的位置
   allH1[currentIndex.value].scrollIntoView({
-    behavior: "smooth",//过渡动画效果
-    block:'start',//滚动到的位置，默认是起始位置
+    behavior: "smooth", //过渡动画效果
+    block: "start", //滚动到的位置，默认是起始位置
   });
+};
+// 点击登录与注册按钮的时候弹出对话框
+const Showlogin = () => {
+  userStore.visiable = true;
 };
 </script>
 
