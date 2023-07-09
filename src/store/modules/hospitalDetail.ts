@@ -1,8 +1,12 @@
 import { defineStore } from "pinia";
 // pinia 仓库写法：组合式API、选择式API
-import { reqHospitalDetail } from "@/api/hospital";
+import { reqHospitalDetail, reqHospitalDeparment } from "@/api/hospital";
 // 引入详情数据的ts类型
-import type { HospitalDetail } from "@/api/hospital/type";
+import type {
+  HospitalDetail,
+  DeparmentResponseData,
+  DeparmentArr,
+} from "@/api/hospital/type";
 import type { HosPitalDetail } from "@/api/hospital/type";
 import type { DetailState } from "./interface";
 
@@ -12,6 +16,8 @@ const useDetailStore = defineStore("Detail", {
     return {
       // 医院详情的数据
       hospitalInfo: {} as HosPitalDetail,
+      // 存储医院科室的数据
+      deparmentArr: [],
     };
   },
   actions: {
@@ -20,6 +26,15 @@ const useDetailStore = defineStore("Detail", {
       let result: HospitalDetail = await reqHospitalDetail(hoscode);
       if (result.code == 200) {
         this.hospitalInfo = result.data;
+      }
+      // console.log(result);
+    },
+    // 获取医院某一科室的方法
+    async getDeparment(hoscode: string) {
+      let result: any = await reqHospitalDeparment(hoscode);
+      console.log(result);
+      if (result.code == 200) {
+        this.deparmentArr = result.data;
       }
     },
   },

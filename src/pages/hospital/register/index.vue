@@ -44,7 +44,13 @@
     <!-- 展示内容的区域 -->
     <div class="content">
       <div class="left">
-        <img :src="`data:image/jpeg;base64,`+hospitalStore.hospitalInfo.hospital?.logoData" alt=""/>
+        <img
+          :src="
+            `data:image/jpeg;base64,` +
+            hospitalStore.hospitalInfo.hospital?.logoData
+          "
+          alt=""
+        />
       </div>
       <div class="right">
         <div>挂号规则</div>
@@ -75,13 +81,59 @@
         </div>
       </div>
     </div>
+    <!-- 放置每一个医院的科室数据 -->
+    <div class="deparment">
+      <div class="leftNav">
+        <ul>
+          <li
+            v-for="(deparment, index) in hospitalStore.deparmentArr"
+            :class="{ active: index == currentIndex }"
+            @click="changeIndex(index)"
+            :key="deparment.depcode"
+          >
+            {{ deparment.depname }}
+          </li>
+        </ul>
+      </div>
+      <div class="deparmentInfo">
+        <!-- 用一个div代表：大科室与小科室 -->
+        <div
+          class="showDeparment"
+          v-for="deparment in hospitalStore.deparmentArr"
+          :key="deparment.depcode"
+        >
+          <h1 class="cur">{{ deparment.depname }}</h1>
+          <!-- 每一个大的科室下小科室 -->
+          <ul>
+            <li v-for="item in deparment.children" :key="item.depcode">
+              {{ item.depname }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 // 引入医院详情仓库的数据
 import useDetailStore from "@/store/modules/hospitalDetail";
 let hospitalStore = useDetailStore();
+// 控制科室高亮的响应式数据
+let currentIndex = ref<number>(0);
+// 左侧大的科室点击的事件
+const changeIndex = (index: number) => {
+  currentIndex.value = index;
+  // 点击导航获取右侧科室（大的科室好标题）
+  let allH1 = document.querySelectorAll(".cur");
+  // console.log(allH1);
+  // 滚动到对应科室的位置
+  allH1[currentIndex.value].scrollIntoView({
+    behavior: "smooth",//过渡动画效果
+    block:'start',//滚动到的位置，默认是起始位置
+  });
+};
 </script>
 
 <style scoped lang="scss">
@@ -130,6 +182,63 @@ let hospitalStore = useDetailStore();
       }
       .rule {
         margin: 10px 0;
+      }
+    }
+  }
+  .deparment {
+    width: 100%;
+    height: 500px;
+    display: flex;
+    margin-top: 20px;
+    /* background: pink; */
+    .leftNav {
+      width: 80px;
+      height: 100%;
+      ul {
+        width: 100%;
+        height: 100%;
+        background: rgb(248, 248, 248);
+        display: flex;
+        flex-direction: column;
+        li {
+          flex: 1;
+          text-align: center;
+          color: #7f7f7f;
+          font-size: 14px;
+          line-height: 30px;
+          /* 高亮效果 */
+          &.active {
+            border-left: 1px solid red;
+            color: red;
+            background: white;
+          }
+        }
+      }
+    }
+    .deparmentInfo {
+      /* 除了 leftNav占了80px，其他都是deparmentInfo*/
+      flex: 1;
+      margin-left: 20px;
+      height: 100%;
+      overflow: auto;
+      /* 清除滚动条 */
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      .showDeparment {
+        h1 {
+          background: rgb(248, 248, 248);
+          color: #7f7f7f;
+        }
+        ul {
+          display: flex;
+          flex-wrap: wrap;
+          li {
+            width: 33%;
+            color: #7f7f7f;
+            line-height: 30px;
+          }
+        }
       }
     }
   }
