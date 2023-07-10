@@ -26,10 +26,13 @@
                   </el-form-item>
                   <el-form-item>
                     <el-button
-                      :disabled="!isPhone ? true : false"
+                      :disabled="!isPhone || flag ? true : false"
                       @click="getCode"
-                      >获取验证码</el-button
                     >
+                      <!-- :flag="flag"   代表给父组件传递 props-->
+                      <CountDown v-if="flag" :flag="flag" @getFlag="getFlag" />
+                      <span v-else>获取验证码</span>
+                    </el-button>
                   </el-form-item>
                 </el-form>
                 <el-button type="primary" style="width: 100%"
@@ -133,6 +136,10 @@ import { User, Lock } from "@element-plus/icons-vue";
 // import useUserStore from '@/store/mod'
 import useUserStore from "@/store/modules/user";
 import { ref, reactive, computed } from "vue";
+// 引入倒计时组件
+import CountDown from "../countdown/index.vue";
+// 定义一个响应式数据控制倒计时组件显示与隐藏
+let flag = ref<boolean>(false); //flag如果为真，开启倒计时，反之不是
 let userStore = useUserStore();
 let scene = ref<number>(0); //0代表手机号码登录，1代表微信扫码登录
 // 收集表单数据----手机号码
@@ -151,9 +158,10 @@ let isPhone = computed(() => {
 
 // 获取手机验证码按钮的回调
 const getCode = async () => {
+  // 开启倒计时模式，倒计时组件显示出来
+  flag.value = true;
   // alert(1111);
   // 通知pinia仓库存储验证码
-
   // console.log("zujian", result);
   try {
     // 如果获取验证码成功，就执行下面语句
@@ -168,6 +176,13 @@ const getCode = async () => {
 // 点击微信扫码登录|微信小图标切换为微信扫码登录
 const changeScene = () => {
   scene.value = 1;
+};
+
+// 计数器子组件绑定的自定义事件
+// 当倒计时为零时，通知父组件倒计时组件隐藏
+const getFlag = (val: boolean) => {
+  // console.log(value);
+  flag.value = val;
 };
 </script>
 
