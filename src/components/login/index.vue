@@ -14,16 +14,22 @@
                     <el-input
                       placeholder="请你输入手机号码"
                       :prefix-icon="User"
+                      v-model="loginParam.phone"
                     ></el-input>
                   </el-form-item>
                   <el-form-item>
                     <el-input
                       placeholder="请你输入手机验证码"
                       :prefix-icon="Lock"
+                      v-model="loginParam.code"
                     ></el-input>
                   </el-form-item>
                   <el-form-item>
-                    <el-button>获取验证码</el-button>
+                    <el-button
+                      :disabled="!isPhone ? true : false"
+                      @click="getCode"
+                      >获取验证码</el-button
+                    >
                   </el-form-item>
                 </el-form>
                 <el-button type="primary" style="width: 100%"
@@ -126,9 +132,38 @@ import { User, Lock } from "@element-plus/icons-vue";
 // 获取user仓库的数据visiable，可以控制login组件的对话框显示与隐藏
 // import useUserStore from '@/store/mod'
 import useUserStore from "@/store/modules/user";
-import { ref } from "vue";
+import { ref, reactive, computed } from "vue";
 let userStore = useUserStore();
 let scene = ref<number>(0); //0代表手机号码登录，1代表微信扫码登录
+// 收集表单数据----手机号码
+let loginParam = reactive({
+  phone: "", //收集手机号
+  code: "", //收集验证码
+});
+// 计算出当前表单元素收集的内容是否是手机号码格式
+let isPhone = computed(() => {
+  // 手机号码的正则表达式
+  const reg =
+    /^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$/;
+  // 返回布尔值：真代表手机号码，假代表不是手机号码
+  return reg.test(loginParam.phone);
+});
+
+// 获取手机验证码按钮的回调
+const getCode = async () => {
+  // alert(1111);
+  // 通知pinia仓库存储验证码
+
+  // console.log("zujian", result);
+  try {
+    // 如果获取验证码成功，就执行下面语句
+    await userStore.getCode(loginParam.phone);
+    // 点击获取验证码后，自动将验证码填充到输入框
+    loginParam.code = userStore.code;
+  } catch (error) {
+    // 获取验证码失败
+  }
+};
 
 // 点击微信扫码登录|微信小图标切换为微信扫码登录
 const changeScene = () => {
