@@ -9,7 +9,7 @@
           <el-col :span="12">
             <div class="login">
               <div v-show="scene == 0">
-                <el-form :model="loginParam" :rules="rules">
+                <el-form :model="loginParam" :rules="rules" ref="form">
                   <el-form-item prop="phone">
                     <el-input
                       placeholder="请你输入手机号码"
@@ -149,6 +149,8 @@ import { ElMessage } from "element-plus";
 let flag = ref<boolean>(false); //flag如果为真，开启倒计时，反之不是
 let userStore = useUserStore();
 let scene = ref<number>(0); //0代表手机号码登录，1代表微信扫码登录
+// 获取form组件实例
+const form = ref<any>();
 // 收集表单数据----手机号码
 let loginParam = reactive({
   phone: "", //收集手机号
@@ -199,6 +201,9 @@ const changeScene = () => {
 
 // 点击用户登录按钮回调
 const login = async () => {
+  // 当手机号码和验证码都符合条件时。才会继续进行登录请求
+  await form.value.validate();
+
   // alert(123);
   // 发送登录请求
   // 登录请求成功：顶部组件需要展示用户名字/对话框关闭
@@ -217,6 +222,29 @@ const login = async () => {
   }
 };
 
+// 手机号码的自定义校验规则
+const validatorPhone = (rule: any, value: any, callBack: any) => {
+  // rlue:即为表单校验规则对象
+  // value：即为当前文本的内容
+  // callBacck：回调函数
+  const reg =
+    /^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$/;
+  if (reg.test(value)) {
+    callBack();
+  } else {
+    callBack(new Error("请输入正确的手机号码格式"));
+  }
+};
+// 验证码自定义校验规则
+const validatorCode = (rule: any, value: any, callBack: any) => {
+  const reg = /^\d{6}$/;
+  if (reg.test(value)) {
+    callBack();
+  } else {
+    callBack(new Error("请输入正确的验证码格式"));
+  }
+};
+
 // 表单校验的规则对象
 const rules = {
   // 手机号码的校验规则
@@ -227,20 +255,33 @@ const rules = {
   // blur：失去焦点时触发校验
   // min:代表的是最小位数
   // max：代表的是最大位数
+  // phone: [
+  //   {
+  //     required: true,
+  //     message: "手机号码务必11位",
+  //     trigger: "change",
+  //     min: 11,
+  //   },
+  // ],
+  // code: [
+  //   {
+  //     required: true,
+  //     message: "验证码务必6位",
+  //     trigger: "blur",
+  //     min: 6,
+  //   },
+  // ],
+
   phone: [
     {
-      required: true,
-      message: "手机号码务必11位",
       trigger: "change",
-      min: 11,
+      validator: validatorPhone,
     },
   ],
   code: [
     {
-      required: true,
-      message: "验证码务必6位",
       trigger: "blur",
-      min: 6,
+      validator: validatorCode,
     },
   ],
 };
