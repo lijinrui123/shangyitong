@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <!-- title：对话框左上角的标题  v-model :控制对话框的显示与隐藏 -->
-    <el-dialog v-model="userStore.visiable" title="用户登录">
+    <el-dialog v-model="userStore.visiable" title="用户登录" @close="close">
       <!-- 对话框身体部分结构 -->
       <div class="content">
         <el-row>
@@ -130,7 +130,9 @@
         </el-row>
       </div>
       <template #footer>
-        <el-button type="primary" size="default">关闭窗口</el-button>
+        <el-button type="primary" size="default" @click="closeDialog"
+          >关闭窗口</el-button
+        >
       </template>
     </el-dialog>
   </div>
@@ -284,6 +286,24 @@ const rules = {
       validator: validatorCode,
     },
   ],
+};
+
+// 对话框关闭事件的回调
+const close = () => {
+  // 清空收集的数据
+  Object.assign(loginParam, { phone: "", code: "" });
+  // 清除上一次表单校验的结果
+  form.value.resetFields();
+};
+
+// 关闭对话框窗口按钮的回调
+const closeDialog = () => {
+  // 关闭对话框
+  userStore.visiable = false;
+  // 清空收集的数据
+  Object.assign(loginParam, { phone: "", code: "" });
+  // 清除上一次表单校验的结果
+  form.value.resetFields();
 };
 </script>
 
