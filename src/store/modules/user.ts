@@ -4,14 +4,14 @@ import { defineStore } from "pinia";
 // 引入获取手机验证码的请求方法
 import { reqCode, reqUserLogin } from "@/api/hospital/index";
 import type { LoginData, UserLoginResponseData } from "@/api/hospital/type";
-import { GET_TOKEN, SET_TOKEN } from "@/utils/user";
+import { GET_TOKEN, SET_TOKEN, REMOVE_TOKEN } from "@/utils/user";
 import type { UserState } from "./interface";
 const useUserStore = defineStore("User", {
   state: (): UserState => {
     return {
       visiable: false, //用于控制登录组件的dialog显示与隐藏
       code: "", //存储用户的手机验证码
-      
+
       // JSON.parse将字符串转换为对象
       // 如果本地有数据，就从本地存储中拿数据，这样子就不用每次都调用userLogin方法
       // userInfo: JSON.parse(localStorage.getItem("USERINFO") as string) || {},
@@ -55,6 +55,17 @@ const useUserStore = defineStore("User", {
       } else {
         return Promise.reject(new Error(result.message));
       }
+    },
+
+    // 退出登录的方法
+    logout() {
+      // 清空仓库里的数据
+      this.userInfo = {
+        name: "",
+        token: "",
+      };
+      // 清空本地存储的数据
+      REMOVE_TOKEN();
     },
   },
 

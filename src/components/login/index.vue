@@ -288,22 +288,22 @@ const rules = {
   ],
 };
 
-// 对话框关闭事件的回调
-const close = () => {
-  // 清空收集的数据
-  Object.assign(loginParam, { phone: "", code: "" });
-  // 清除上一次表单校验的结果
-  form.value.resetFields();
-};
+// // 对话框关闭事件的回调
+// const close = () => {
+//   // 清空收集的数据
+//   Object.assign(loginParam, { phone: "", code: "" });
+//   // 清除上一次表单校验的结果
+//   form.value.resetFields();
+// };
 
 // 关闭对话框窗口按钮的回调
 const closeDialog = () => {
   // 关闭对话框
   userStore.visiable = false;
-  // 清空收集的数据
-  Object.assign(loginParam, { phone: "", code: "" });
-  // 清除上一次表单校验的结果
-  form.value.resetFields();
+  // // 清空收集的数据
+  // Object.assign(loginParam, { phone: "", code: "" });
+  // // 清除上一次表单校验的结果
+  // form.value.resetFields();
 };
 </script>
 

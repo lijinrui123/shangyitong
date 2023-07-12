@@ -12,10 +12,14 @@
     <HospitalBottom />
   </div>
   <!-- 登陆组件 -->
-  <Login />
+  <Login v-if="userStore.visiable" />
 </template>
 
 <script setup lang="ts">
+// 引入仓库
+import useUserStore from "./store/modules/user";
+let userStore = useUserStore();
+
 // import request from "@/utils/request";
 // import { onMounted } from "vue";
 // onMounted(() => {
