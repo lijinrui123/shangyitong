@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <!-- title：对话框左上角的标题  v-model :控制对话框的显示与隐藏 -->
-    <el-dialog v-model="userStore.visiable" title="用户登录" @close="close">
+    <el-dialog v-model="userStore.visiable" title="用户登录">
       <!-- 对话框身体部分结构 -->
       <div class="content">
         <el-row>
@@ -69,7 +69,44 @@
                   </svg>
                 </div>
               </div>
-              <div class="webchat" v-show="scene == 1">微信扫码登录</div>
+              <div class="webchat" v-show="scene == 1">
+                <!-- 在这个容器当中显示微信扫码登录页面 -->
+                <div id="login-container"></div>
+                <div class="phone" @click="handler">
+                  <p>手机短信验证码登录</p>
+                  <svg
+                    t="1689178929313"
+                    class="icon"
+                    viewBox="0 0 1024 1024"
+                    version="1.1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    p-id="2344"
+                    width="16"
+                    height="16"
+                  >
+                    <path
+                      d="M512.3072 883.3024c-41.2672 0-74.8544-33.5872-74.8544-74.8544s33.5872-74.8544 74.8544-74.8544 74.8544 33.5872 74.8544 74.8544S553.5744 883.3024 512.3072 883.3024zM512.3072 770.4576c-20.992 0-37.9904 16.9984-37.9904 37.9904s16.9984 37.9904 37.9904 37.9904 37.9904-16.9984 37.9904-37.9904S533.1968 770.4576 512.3072 770.4576z"
+                      fill="#d81e06"
+                      p-id="2345"
+                    ></path>
+                    <path
+                      d="M680.1408 991.9488c-3.1744 0-6.4512-0.8192-9.4208-2.56-41.2672-24.4736-108.032-24.3712-108.7488-24.3712 0 0-0.1024 0-0.1024 0L276.8896 965.0176c-54.3744 0-98.5088-44.2368-98.5088-98.5088L178.3808 140.3904c0-54.3744 44.2368-98.5088 98.5088-98.5088l470.7328 0c54.3744 0 98.5088 44.2368 98.5088 98.5088l0 726.1184c0 54.3744-44.2368 98.5088-98.5088 98.5088-10.1376 0-18.432-8.2944-18.432-18.432s8.2944-18.432 18.432-18.432c33.9968 0 61.6448-27.648 61.6448-61.6448L809.2672 140.3904c0-33.9968-27.648-61.6448-61.6448-61.6448L276.8896 78.7456c-33.9968 0-61.6448 27.648-61.6448 61.6448l0 726.1184c0 33.9968 27.648 61.6448 61.6448 61.6448l284.8768 0c4.1984 0 78.0288-0.1024 127.7952 29.4912 8.704 5.2224 11.6736 16.4864 6.4512 25.2928C692.5312 988.7744 686.4896 991.9488 680.1408 991.9488z"
+                      fill="#d81e06"
+                      p-id="2346"
+                    ></path>
+                    <path
+                      d="M589.824 149.7088 434.7904 149.7088c-10.1376 0-18.432-8.2944-18.432-18.432s8.2944-18.432 18.432-18.432L589.824 112.8448c10.1376 0 18.432 8.2944 18.432 18.432S599.9616 149.7088 589.824 149.7088z"
+                      fill="#d81e06"
+                      p-id="2347"
+                    ></path>
+                    <path
+                      d="M705.024 230.0928c9.728 0 17.7152 7.8848 17.7152 17.7152l0 376.9344c0 9.728-7.8848 17.7152-17.7152 17.7152L319.5904 642.4576c-9.728 0-17.7152-7.8848-17.7152-17.7152L301.8752 247.808c0-9.728 7.8848-17.7152 17.7152-17.7152L705.024 230.0928M705.024 193.2288 319.5904 193.2288c-30.1056 0-54.5792 24.4736-54.5792 54.5792l0 376.9344c0 30.1056 24.4736 54.5792 54.5792 54.5792l385.4336 0c30.1056 0 54.5792-24.4736 54.5792-54.5792L759.6032 247.808C759.6032 217.7024 735.1296 193.2288 705.024 193.2288L705.024 193.2288z"
+                      fill="#d81e06"
+                      p-id="2348"
+                    ></path>
+                  </svg>
+                </div>
+              </div>
             </div>
           </el-col>
           <el-col :span="12">
@@ -139,6 +176,8 @@
 </template>
 
 <script setup lang="ts">
+// 引入微信扫码登录参数请求
+import { reqWxLogin } from "@/api/hospital";
 import { User, Lock } from "@element-plus/icons-vue";
 // 获取user仓库的数据visiable，可以控制login组件的对话框显示与隐藏
 // import useUserStore from '@/store/mod'
@@ -146,6 +185,7 @@ import useUserStore from "@/store/modules/user";
 import { ref, reactive, computed } from "vue";
 // 引入倒计时组件
 import CountDown from "../countdown/index.vue";
+import type { WXLoginResponseData } from "@/api/hospital/type";
 import { ElMessage } from "element-plus";
 // 定义一个响应式数据控制倒计时组件显示与隐藏
 let flag = ref<boolean>(false); //flag如果为真，开启倒计时，反之不是
@@ -197,8 +237,29 @@ const getFlag = (val: boolean) => {
 };
 
 // 点击微信扫码登录|微信小图标切换为微信扫码登录
-const changeScene = () => {
+const changeScene = async () => {
+  // 切换场景为1
   scene.value = 1;
+  // 发送请求获取微信扫码二维码需要参数
+  // 我们在向硅谷学校的服务器发请求，获取微信扫码登录页面参数
+  // 还需要携带一个参数：告诉学校服务器，用户授权成功以后重定向项目的某一页面
+  let redirect_URL = encodeURIComponent(window.location.origin + "wxlogin");
+  let result: WXLoginResponseData = await reqWxLogin(redirect_URL);
+  console.log(result);
+
+  // 生成微信扫码登录二维码页面
+  // @ts-ignore
+  new WxLogin({
+    self_redirect: true, //true：手机点击确认登录后可以在 iframe 内跳转到 redirect_uri，false：手机点击确认登录后可以在 top window 跳转到 redirect_uri。默认为 false。
+    id: "login-container", //第三方页面显示二维码的容器id  "login-container"
+    appid: result.data.appid, //应用唯一标识，在微信开放平台提交应用审核通过后获得
+    scope: "snsapi_login", //应用授权作用域，代表当前微信扫码登录已经授权了，拥有多个作用域用逗号（,）分隔，网页应用目前仅填写snsapi_login即可
+    redirect_uri: result.data.redirectUri, //重定向地址，需要进行UrlEncode,填写授权回调域路径，就是用户授权成功以后，微信服务器向公司后台推送code地址
+    // 用于保持请求和回调的状态，授权请求后原样带回给第三方。该参数可用于防止csrf攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加session进行校验
+    state: result.data.state, //就是学校服务器重定向的地址，携带用户信息。
+    style: "black",
+    href: "",
+  });
 };
 
 // 点击用户登录按钮回调
@@ -225,7 +286,7 @@ const login = async () => {
 };
 
 // 手机号码的自定义校验规则
-const validatorPhone = (rule: any, value: any, callBack: any) => {
+const validatorPhone = (value: any, callBack: any) => {
   // rlue:即为表单校验规则对象
   // value：即为当前文本的内容
   // callBacck：回调函数
@@ -238,7 +299,7 @@ const validatorPhone = (rule: any, value: any, callBack: any) => {
   }
 };
 // 验证码自定义校验规则
-const validatorCode = (rule: any, value: any, callBack: any) => {
+const validatorCode = (value: any, callBack: any) => {
   const reg = /^\d{6}$/;
   if (reg.test(value)) {
     callBack();
@@ -305,6 +366,11 @@ const closeDialog = () => {
   // // 清除上一次表单校验的结果
   // form.value.resetFields();
 };
+
+// 点击手机短信验证码盒子回调
+const handler = () => {
+  scene.value = 0;
+};
 </script>
 
 <script lang="ts">
@@ -324,6 +390,19 @@ export default {
   .login {
     padding: 20px;
     border: 1px solid #ccc;
+    .webchat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .phone {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        p {
+          margin: 10px 0;
+        }
+      }
+    }
   }
   .bottom {
     display: flex;

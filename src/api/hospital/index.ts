@@ -5,6 +5,7 @@ import type {
   DeparmentResponseData,
   LoginData,
   UserLoginResponseData,
+  WXLoginResponseData,
 } from "./type";
 // 枚举请求地址
 enum API {
@@ -15,6 +16,8 @@ enum API {
   GETUSERCODE_URL = "/sms/send/",
   // 用户登录
   USERLOGIN_URL = "/user/login",
+  // 获取微信扫码登录需要参数
+  WXLOGIN_URL = "/user/weixin/getLoginParam/",
 }
 
 // 箭头函数如果只有一行表达式，可以不加括号，箭头函数自带return
@@ -37,3 +40,9 @@ export const reqCode = (phone: string) =>
 // 用户登录接口
 export const reqUserLogin = (data: LoginData) =>
   request.post<any, UserLoginResponseData>(API.USERLOGIN_URL, data);
+
+// 获取微信扫码登录生成二维码需要参数接口
+export const reqWxLogin = (wxRedirectUri: string) =>
+  request.get<any, WXLoginResponseData>(
+    API.WXLOGIN_URL + `?wxRedirectUri=${wxRedirectUri}`
+  );
