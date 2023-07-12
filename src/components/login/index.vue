@@ -182,7 +182,7 @@ import { User, Lock } from "@element-plus/icons-vue";
 // 获取user仓库的数据visiable，可以控制login组件的对话框显示与隐藏
 // import useUserStore from '@/store/mod'
 import useUserStore from "@/store/modules/user";
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, watch } from "vue";
 // 引入倒计时组件
 import CountDown from "../countdown/index.vue";
 import type { WXLoginResponseData } from "@/api/hospital/type";
@@ -286,7 +286,7 @@ const login = async () => {
 };
 
 // 手机号码的自定义校验规则
-const validatorPhone = (value: any, callBack: any) => {
+const validatorPhone = (rule: any, value: any, callBack: any) => {
   // rlue:即为表单校验规则对象
   // value：即为当前文本的内容
   // callBacck：回调函数
@@ -299,7 +299,7 @@ const validatorPhone = (value: any, callBack: any) => {
   }
 };
 // 验证码自定义校验规则
-const validatorCode = (value: any, callBack: any) => {
+const validatorCode = (rule: any, value: any, callBack: any) => {
   const reg = /^\d{6}$/;
   if (reg.test(value)) {
     callBack();
@@ -371,6 +371,16 @@ const closeDialog = () => {
 const handler = () => {
   scene.value = 0;
 };
+
+// 监听场景的数据
+watch(
+  () => scene.value,
+  (val: number) => {
+    if (val === 1) {
+      userStore.queryState();
+    }
+  }
+);
 </script>
 
 <script lang="ts">

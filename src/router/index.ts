@@ -37,6 +37,10 @@ export default createRouter({
       ],
     },
     {
+      path: "/wxlogin",
+      component: () => import("@/pages/wxlogin/index.vue"),
+    },
+    {
       path: "/",
       //   路由重定向到home
       redirect: "/home",
