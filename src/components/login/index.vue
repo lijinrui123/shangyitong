@@ -9,15 +9,15 @@
           <el-col :span="12">
             <div class="login">
               <div v-show="scene == 0">
-                <el-form>
-                  <el-form-item>
+                <el-form :model="loginParam" :rules="rules">
+                  <el-form-item prop="phone">
                     <el-input
                       placeholder="请你输入手机号码"
                       :prefix-icon="User"
                       v-model="loginParam.phone"
                     ></el-input>
                   </el-form-item>
-                  <el-form-item>
+                  <el-form-item prop="code">
                     <el-input
                       placeholder="请你输入手机验证码"
                       :prefix-icon="Lock"
@@ -215,6 +215,34 @@ const login = async () => {
       message: (error as Error).message,
     });
   }
+};
+
+// 表单校验的规则对象
+const rules = {
+  // 手机号码的校验规则
+  // required:代表当前字段务必进行校验
+  // message:代表的校验错误的提示信息
+  // trigger：代表表单校验触发的时机
+  // change:文本发生变化的时候进行校验
+  // blur：失去焦点时触发校验
+  // min:代表的是最小位数
+  // max：代表的是最大位数
+  phone: [
+    {
+      required: true,
+      message: "手机号码务必11位",
+      trigger: "change",
+      min: 11,
+    },
+  ],
+  code: [
+    {
+      required: true,
+      message: "验证码务必6位",
+      trigger: "blur",
+      min: 6,
+    },
+  ],
 };
 </script>
 

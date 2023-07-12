@@ -11,9 +11,11 @@ const useUserStore = defineStore("User", {
     return {
       visiable: false, //用于控制登录组件的dialog显示与隐藏
       code: "", //存储用户的手机验证码
+      
       // JSON.parse将字符串转换为对象
       // 如果本地有数据，就从本地存储中拿数据，这样子就不用每次都调用userLogin方法
       // userInfo: JSON.parse(localStorage.getItem("USERINFO") as string) || {},
+
       userInfo: JSON.parse(GET_TOKEN() as string) || {},
     };
   },
