@@ -6,7 +6,6 @@
 
 <script setup lang="ts">
 // 引入组合式API函数ref
-import { emit } from "process";
 import { ref, watch } from "vue";
 // 倒计时的事件
 let time = ref<number>(5);

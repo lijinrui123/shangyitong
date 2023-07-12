@@ -1,6 +1,11 @@
 // 引入二次封装axios
 import request from "@/utils/request";
-import type { HospitalDetail, DeparmentResponseData } from "./type";
+import type {
+  HospitalDetail,
+  DeparmentResponseData,
+  LoginData,
+  UserLoginResponseData,
+} from "./type";
 // 枚举请求地址
 enum API {
   HOSPITALDETAIL_URL = "/hosp/hospital/",
@@ -8,6 +13,8 @@ enum API {
   HOSPITALDEPARMENT_URL = "/hosp/hospital/department/",
   // 获取验证码
   GETUSERCODE_URL = "/sms/send/",
+  // 用户登录
+  USERLOGIN_URL = "/user/login",
 }
 
 // 箭头函数如果只有一行表达式，可以不加括号，箭头函数自带return
@@ -26,3 +33,7 @@ export const reqHospitalDeparment = (hoscode: string) => {
 // 获取验证码接口
 export const reqCode = (phone: string) =>
   request.get<any, any>(API.GETUSERCODE_URL + phone);
+
+// 用户登录接口
+export const reqUserLogin = (data: LoginData) =>
+  request.post<any, UserLoginResponseData>(API.USERLOGIN_URL, data);

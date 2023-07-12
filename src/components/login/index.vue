@@ -35,7 +35,13 @@
                     </el-button>
                   </el-form-item>
                 </el-form>
-                <el-button type="primary" style="width: 100%"
+                <el-button
+                  type="primary"
+                  style="width: 100%"
+                  :disabled="
+                    !isPhone || loginParam.code.length < 6 ? true : false
+                  "
+                  @click="login"
                   >用户登陆</el-button
                 >
                 <div class="bottom" @click="changeScene">
@@ -138,6 +144,7 @@ import useUserStore from "@/store/modules/user";
 import { ref, reactive, computed } from "vue";
 // 引入倒计时组件
 import CountDown from "../countdown/index.vue";
+import { ElMessage } from "element-plus";
 // 定义一个响应式数据控制倒计时组件显示与隐藏
 let flag = ref<boolean>(false); //flag如果为真，开启倒计时，反之不是
 let userStore = useUserStore();
@@ -158,6 +165,8 @@ let isPhone = computed(() => {
 
 // 获取手机验证码按钮的回调
 const getCode = async () => {
+  // 解决element-plus 按钮禁用还能点击的问题
+  if (!isPhone.value || flag.value) return;
   // 开启倒计时模式，倒计时组件显示出来
   flag.value = true;
   // alert(1111);
@@ -170,7 +179,17 @@ const getCode = async () => {
     loginParam.code = userStore.code;
   } catch (error) {
     // 获取验证码失败
+    ElMessage({
+      type: "error",
+      message: (error as Error).message,
+    });
   }
+};
+// 计数器子组件绑定的自定义事件
+// 当倒计时为零时，通知父组件倒计时组件隐藏
+const getFlag = (val: boolean) => {
+  // console.log(value);
+  flag.value = val;
 };
 
 // 点击微信扫码登录|微信小图标切换为微信扫码登录
@@ -178,11 +197,24 @@ const changeScene = () => {
   scene.value = 1;
 };
 
-// 计数器子组件绑定的自定义事件
-// 当倒计时为零时，通知父组件倒计时组件隐藏
-const getFlag = (val: boolean) => {
-  // console.log(value);
-  flag.value = val;
+// 点击用户登录按钮回调
+const login = async () => {
+  // alert(123);
+  // 发送登录请求
+  // 登录请求成功：顶部组件需要展示用户名字/对话框关闭
+  // 登录失败：弹出对应登录失败的错误信息
+  try {
+    // 用户登录成功
+    await userStore.userLogin(loginParam);
+    // 关闭对话框
+    userStore.visiable = false;
+  } catch (error) {
+    // 登录失败，弹出错误信息
+    ElMessage({
+      type: "error",
+      message: (error as Error).message,
+    });
+  }
 };
 </script>
 

@@ -40,6 +40,8 @@ const getRegion = async () => {
   let result: HospitalLevelAndRegionResponseData =
     await reqHospitalLevelAndRegion("Beijin");
   // 存储地区的数据
+  // console.log(result);
+
   if (result.code == 200) {
     RegionArr.value = result.data;
   }
