@@ -14,9 +14,13 @@
       <div class="container">
         <div
           class="item"
-          :class="{ active: item.status == -1 || item.availableNumber == -1 }"
+          :class="{
+            active: item.status == -1 || item.availableNumber == -1,
+            cur: item.workDate == workTime.workDate,
+          }"
           v-for="item in workData.bookingScheduleList"
           :key="item"
+          @click="changeTime(item)"
         >
           <div class="top2">{{ item.workDate }}-{{ item.dayOfWeek }}</div>
           <div class="bottom">
@@ -42,12 +46,12 @@
     <!-- 底部展示医生的结构 -->
     <div class="bottom1">
       <!-- 展示即将放号的时间 -->
-      <div class="will">
+      <div class="will" v-if="workTime.status == 1">
         <span class="time">2023xxxxxxxxxxxxx</span>
         <span class="willtext">放号</span>
       </div>
       <!-- 展示医生的结构 :上午、下午-->
-      <div class="doctor">
+      <div class="doctor" v-else>
         <div class="morning">
           <!-- 顶部文字提示 -->
           <div class="tip1">
@@ -110,20 +114,20 @@
             <span class="text">上午号源</span>
           </div>
           <!-- 每一个医生的信息 -->
-          <div class="doc_info">
+          <div class="doc_info" v-for="doctor in morningArr" :key="doctor.id">
             <!-- 展示医生的名字|技能 -->
             <div class="left">
               <div class="info">
-                <span>医生</span>
+                <span>{{ doctor.title }}</span>
                 <span>|</span>
-                <span>xxxx</span>
+                <span>{{ doctor.docname }}</span>
               </div>
-              <div class="skill">xxxxxxxxxxxxxxxxx</div>
+              <div class="skill">{{ doctor.skill }}</div>
             </div>
             <!-- 右侧展示挂号的钱数 -->
             <div class="right">
-              <div class="money">￥10元</div>
-              <el-button type="primary">100</el-button>
+              <div class="money">￥{{ doctor.amount }}元</div>
+              <el-button type="primary">{{ doctor.availableNumber }}</el-button>
             </div>
           </div>
         </div>
@@ -155,20 +159,20 @@
             <span class="text">下午号源</span>
           </div>
           <!-- 每一个医生的信息 -->
-          <div class="doc_info">
+          <div class="doc_info" v-for="doctor in afterArr" :key="doctor.id">
             <!-- 展示医生的名字|技能 -->
             <div class="left">
               <div class="info">
-                <span>医生</span>
+                <span>{{ doctor.title }}</span>
                 <span>|</span>
-                <span>xxxx</span>
+                <span>{{ doctor.docname }}</span>
               </div>
-              <div class="skill">xxxxxxxxxxxxxxxxx</div>
+              <div class="skill">{{ doctor.skill }}</div>
             </div>
             <!-- 右侧展示挂号的钱数 -->
             <div class="right">
-              <div class="money">￥10元</div>
-              <el-button type="primary">100</el-button>
+              <div class="money">￥{{ doctor.amount }}元</div>
+              <el-button type="primary">{{ doctor.availableNumber }}</el-button>
             </div>
           </div>
         </div>
@@ -178,11 +182,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 
-import { reqHospitalWork } from "@/api/hospital";
+import { reqHospitalWork, reqHospitalDoctor } from "@/api/hospital";
 
-import type { HospitalWorkData } from "@/api/hospital/type";
+import type {
+  HospitalWorkData,
+  DoctorResponseData,
+  DocArr,
+  Doctor,
+} from "@/api/hospital/type";
 
 import { useRoute } from "vue-router";
 // 获取路由对象
@@ -195,6 +204,10 @@ let limit = ref<number>(6);
 
 // 存储医院科室挂号的数据
 let workData = ref<any>({});
+// 存储当前排班日期：当前数据的第一个
+let workTime: any = ref({});
+// 存储排班医生的数据
+let docArr = ref<DocArr>([]);
 
 // 组件挂载完毕发一次请求
 onMounted(() => {
@@ -209,11 +222,59 @@ const fetchWorkData = async () => {
     $route.query.hoscode as string,
     $route.query.depcode as string
   );
-  console.log(result);
+  // console.log(result);
   if (result.code == 200) {
     workData.value = result.data;
+    // 存储第一天日期的数据
+    // workTime.value=workData.bookingScheduleList[0]
+    workTime.value = workData.value.bookingScheduleList[0];
+
+    // 获取一次医生的数据
+    getDoctorWorkData();
   }
 };
+
+// 获取医生排班信息
+const getDoctorWorkData = async () => {
+  // 医院的编号
+  let hoscode: string = $route.query.hoscode as string;
+  // 科室的编号
+  let depcode: string = $route.query.depcode as string;
+  // 时间
+  let workDate: string = workTime.value.workDate;
+  // 获取排班医生的数据
+  let result: DoctorResponseData = await reqHospitalDoctor(
+    hoscode,
+    depcode,
+    workDate
+  );
+  console.log(result);
+  if (result.code == 200) {
+    docArr.value = result.data;
+  }
+};
+
+// 点击顶部某一天的时候触发回调
+const changeTime = (item: any) => {
+  // console.log(item);
+  // 存储用户选择那一天的数据
+  workTime.value = item;
+  // 再发一次获取医生的排班的数据
+  getDoctorWorkData();
+};
+
+// 计算出上午排班的医生数据
+let morningArr = computed(() => {
+  return docArr.value.filter((doc: Doctor) => {
+    return doc.workTime == 0;
+  });
+});
+// 计算出下午排班的医生数据
+let afterArr = computed(() => {
+  return docArr.value.filter((doc: Doctor) => {
+    return doc.workTime == 1;
+  });
+});
 </script>
 
 <style scoped lang="scss">
@@ -237,6 +298,7 @@ const fetchWorkData = async () => {
     display: flex;
     flex-direction: column;
     align-items: center;
+    transition: all 0.5s;
     .time {
       font-weight: 900;
     }
@@ -255,6 +317,9 @@ const fetchWorkData = async () => {
           .top2 {
             background: #ccc;
           }
+        }
+        &.cur {
+          transform: scale(1.1);
         }
 
         .top2 {

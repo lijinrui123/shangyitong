@@ -19,7 +19,7 @@ const request = axios.create({
 request.interceptors.request.use((config) => {
   // 获取用户仓库
   let useStore = useUserStore();
-  console.log(useStore.userInfo);
+  // console.log(useStore.userInfo);
   // token：公共参数，如果用户登录了，需要携带
   if (useStore.userInfo.token) {
     config.headers.token = useStore.userInfo.token;
