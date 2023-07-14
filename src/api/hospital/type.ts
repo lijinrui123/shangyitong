@@ -85,3 +85,35 @@ export interface WXLogin {
 export interface WXLoginResponseData extends ResponseData {
   data: WXLogin;
 }
+
+//
+export interface BaseMap {
+  workDateString: string;
+  releaseTime: string;
+  bigname: string;
+  stopTime: string;
+  depname: string;
+  hosname: string;
+}
+
+//
+export interface WorkData {
+  workDate: string;
+  workDateMd: string;
+  dayOfWeek: string;
+  docCount: number;
+  reservedNumber: null;
+  availableNumber: number;
+  status: number;
+}
+
+export type BookingScheduleList = WorkData[];
+
+// 接口返回ts数据
+export interface HospitalWorkData extends ResponseData {
+  data: {
+    total: number;
+    bookingScheduleList: BookingScheduleList;
+    baseMap: BaseMap;
+  };
+}

@@ -6,6 +6,7 @@ import type {
   LoginData,
   UserLoginResponseData,
   WXLoginResponseData,
+  HospitalWorkData,
 } from "./type";
 // 枚举请求地址
 enum API {
@@ -18,6 +19,8 @@ enum API {
   USERLOGIN_URL = "/user/login",
   // 获取微信扫码登录需要参数
   WXLOGIN_URL = "/user/weixin/getLoginParam/",
+  // 获取某一医院的某一科室预约挂号数据
+  HOSPITALWORK_URL = "/hosp/hospital/auth/getBookingScheduleRule/",
 }
 
 // 箭头函数如果只有一行表达式，可以不加括号，箭头函数自带return
@@ -46,3 +49,15 @@ export const reqWxLogin = (wxRedirectUri: string) =>
   request.get<any, WXLoginResponseData>(
     API.WXLOGIN_URL + `?wxRedirectUri=${wxRedirectUri}`
   );
+
+// 获取预约挂号的接口
+export const reqHospitalWork = (
+  page: number,
+  limit: number,
+  hosode: string,
+  depcode: string
+) => 
+  request.get<any, HospitalWorkData>(
+    API.HOSPITALWORK_URL + `${page}/${limit}/${hosode}/${depcode}`
+  );
+;

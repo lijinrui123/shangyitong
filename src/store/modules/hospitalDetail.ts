@@ -32,7 +32,7 @@ const useDetailStore = defineStore("Detail", {
     // 获取医院某一科室的方法
     async getDeparment(hoscode: string) {
       let result: any = await reqHospitalDeparment(hoscode);
-      console.log(result);
+      // console.log(result);
       if (result.code == 200) {
         this.deparmentArr = result.data;
       }
