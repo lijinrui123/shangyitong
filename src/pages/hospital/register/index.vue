@@ -106,7 +106,7 @@
           <!-- 每一个大的科室下小科室 -->
           <ul>
             <li
-              @click="Showlogin"
+              @click="ShowLogin(item)"
               v-for="item in deparment.children"
               :key="item.depcode"
             >
@@ -123,12 +123,19 @@
 import { ref } from "vue";
 // 引入医院详情仓库的数据
 import useDetailStore from "@/store/modules/hospitalDetail";
+import { useRouter, useRoute } from "vue-router";
 // 获取user仓库的数据visiable，可以控制login组件的对话框显示与隐藏
-import useUserStore from "@/store/modules/user";
-let userStore = useUserStore();
+// import useUserStore from "@/store/modules/user";
+// let userStore = useUserStore();
 let hospitalStore = useDetailStore();
 // 控制科室高亮的响应式数据
 let currentIndex = ref<number>(0);
+
+//获取路由器
+let $router = useRouter();
+// 获取路由对象
+let $route = useRoute();
+
 // 左侧大的科室点击的事件
 const changeIndex = (index: number) => {
   currentIndex.value = index;
@@ -142,8 +149,16 @@ const changeIndex = (index: number) => {
   });
 };
 // 点击登录与注册按钮的时候弹出对话框
-const Showlogin = () => {
-  userStore.visiable = true;
+const ShowLogin = (item: any) => {
+  // 登录组件对话框弹出
+  // userStore.visiable = true;
+  // item 即为用户选中科室的数据
+  // 点击某一医院科室按钮，进入到相应的预约挂号详情页面
+  // 跳转到预约挂号详情页面
+  $router.push({
+    path: "/hospital/register_step1",
+    query: { hoscode: $route.query.hoscode, depcode: item.depcode },
+  });
 };
 </script>
 
