@@ -18,6 +18,10 @@
       <p>婚姻状况:{{ user.isMarry == 1 ? "已婚" : "未婚" }}</p>
       <p>当前住址:{{ user.param.cityString }}</p>
       <p>详细住址:{{ user.paramfullAddress }}</p>
+      <!-- 红色已选择的盒子 -->
+      <transition name="confirm">
+        <div class="confirm" v-if="index === currentIndex">已选择</div>
+      </transition>
     </div>
   </div>
 </template>
@@ -26,7 +30,7 @@
 import { Edit } from "@element-plus/icons-vue";
 
 // 接受父组件传递过来的就诊人信息
-defineProps(["user"]);
+defineProps(["user", "index", "currentIndex"]);
 </script>
 
 <style scoped lang="scss">
@@ -52,9 +56,34 @@ defineProps(["user"]);
     }
   }
   .bottom {
+    position: relative;
     padding-left: 50px;
     p {
       line-height: 40px;
+    }
+    .confirm {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      color: red;
+      border-radius: 50%;
+      border: 1px dashed red;
+      text-align: center;
+      line-height: 200px;
+      left: 20%;
+      top: 20%;
+      opacity: 0.5;
+      transform: rotate(35deg);
+      font-weight: 900;
+    }
+    .confirm-enter-from {
+      transform: scale(1);
+    }
+    .confirm-enter-active {
+      transition: all 0.3s;
+    }
+    .confirm-enter-to {
+      transform: scale(1.3);
     }
   }
 }

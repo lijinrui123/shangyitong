@@ -14,12 +14,15 @@
       </template>
       <!-- 卡片的身体部分展示就诊人信息 -->
       <div class="user">
-        <!-- :user="user"   父组件传数据给子组件 -->
+        <!-- :user="user"       :index="index"    :currenIndex="index"    父组件传数据给子组件 -->
         <Visitor
-          v-for="user in userArr"
+          v-for="(user, index) in userArr"
           :key="user.id"
           class="item"
           :user="user"
+          @click="changeIndex(index)"
+          :index="index"
+          :currentIndex="currentIndex"
         />
       </div>
     </el-card>
@@ -80,7 +83,12 @@
 
     <!-- 确定挂号按钮 -->
     <div class="btn">
-      <el-button type="primary" size="default">确定挂号</el-button>
+      <el-button
+        type="primary"
+        size="default"
+        :disabled="currentIndex == -1 ? true : false"
+        >确定挂号</el-button
+      >
     </div>
   </div>
 </template>
@@ -96,7 +104,6 @@ import type {
   UserResponseData,
   UserArr,
   DoctorInfoData,
-  Doctor,
 } from "@/api/hospital/type";
 // 就诊人组件
 import Visitor from "./visitor.vue";
@@ -108,6 +115,9 @@ let userArr = ref<UserArr>([]);
 
 // 存储医生的信息
 let docInfo = ref<any>({});
+
+// 存储用户确认就诊人索引值
+let currentIndex = ref<number>(-1);
 // 组件挂载完毕获取数据
 onMounted(() => {
   // 获取就诊人信息
@@ -133,6 +143,13 @@ const fetchInfo = async () => {
   if (result.code == 200) {
     docInfo.value = result.data;
   }
+};
+
+// 点击就诊人子组件的回调
+const changeIndex = (index: number) => {
+  //   console.log(index);
+  // 存储当前用户选中就诊人信息索引值
+  currentIndex.value = index;
 };
 </script>
 
