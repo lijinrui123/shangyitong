@@ -8,6 +8,8 @@ import type {
   WXLoginResponseData,
   HospitalWorkData,
   DoctorResponseData,
+  UserResponseData,
+  DoctorInfoData,
 } from "./type";
 // 枚举请求地址
 enum API {
@@ -24,6 +26,11 @@ enum API {
   HOSPITALWORK_URL = "/hosp/hospital/auth/getBookingScheduleRule/",
   // 获取医院某一科室某一天相应医生排班的数据
   HOSPITALDOCTOR_URL = "/hosp/hospital/auth/findScheduleList/",
+  // 获取某一账号下就诊人的信息
+  GETUSER_URL = "/user/patient/auth/findAll",
+
+  // 获取医生挂号的信息
+  GETDOCTOR_URL = "/hosp/hospital/getSchedule/",
 }
 
 // 箭头函数如果只有一行表达式，可以不加括号，箭头函数自带return
@@ -73,3 +80,11 @@ export const reqHospitalDoctor = (
   request.get<any, DoctorResponseData>(
     API.HOSPITALDOCTOR_URL + `${hoscode}/${decode}/${workDate}`
   );
+
+// 获取某一个账号下就诊人信息
+export const reqGetUser = () =>
+  request.get<any, UserResponseData>(API.GETUSER_URL);
+
+// 获取医生挂号的信息接口
+export const reqDoctorInfo = (scheduleId: string) =>
+  request.get<any, DoctorInfoData>(API.GETDOCTOR_URL + scheduleId);

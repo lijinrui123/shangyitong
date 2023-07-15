@@ -47,7 +47,7 @@
     <div class="bottom1">
       <!-- 展示即将放号的时间 -->
       <div class="will" v-if="workTime.status == 1">
-        <span class="time">2023xxxxxxxxxxxxx</span>
+        <span class="time">2023年{{ workTime.workDateMd }}</span>
         <span class="willtext">放号</span>
       </div>
       <!-- 展示医生的结构 :上午、下午-->
@@ -127,7 +127,9 @@
             <!-- 右侧展示挂号的钱数 -->
             <div class="right">
               <div class="money">￥{{ doctor.amount }}元</div>
-              <el-button type="primary">{{ doctor.availableNumber }}</el-button>
+              <el-button type="primary" @click="goStep2(doctor)">{{
+                doctor.availableNumber
+              }}</el-button>
             </div>
           </div>
         </div>
@@ -172,7 +174,9 @@
             <!-- 右侧展示挂号的钱数 -->
             <div class="right">
               <div class="money">￥{{ doctor.amount }}元</div>
-              <el-button type="primary">{{ doctor.availableNumber }}</el-button>
+              <el-button type="primary" @click="goStep2(doctor)">{{
+                doctor.availableNumber
+              }}</el-button>
             </div>
           </div>
         </div>
@@ -193,9 +197,12 @@ import type {
   Doctor,
 } from "@/api/hospital/type";
 
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 // 获取路由对象
 let $route = useRoute();
+
+// 获取路由器对象
+let $router = useRouter();
 
 // 分页器当前页码
 let pageNo = ref<number>(1);
@@ -248,7 +255,7 @@ const getDoctorWorkData = async () => {
     depcode,
     workDate
   );
-  console.log(result);
+  // console.log(result);
   if (result.code == 200) {
     docArr.value = result.data;
   }
@@ -275,6 +282,16 @@ let afterArr = computed(() => {
     return doc.workTime == 1;
   });
 });
+
+// 路由跳转进入到选择就诊人页面
+const goStep2 = (doctor: Doctor) => {
+  // console.log(doctor);
+  // 编程时导航进行路由跳转且携带医生的ID
+  $router.push({
+    path: "/hospital/register_step2",
+    query: { docId: doctor.id },
+  });
+};
 </script>
 
 <style scoped lang="scss">
@@ -319,6 +336,7 @@ let afterArr = computed(() => {
           }
         }
         &.cur {
+          /* 缩放1.1倍 */
           transform: scale(1.1);
         }
 
