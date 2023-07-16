@@ -54,6 +54,7 @@ export interface PayInfo {
   resultCode: string;
 }
 
+// 接口返回类型
 export interface QrCode extends ResponseData {
   data: PayInfo;
 }
