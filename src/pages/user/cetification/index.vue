@@ -16,7 +16,7 @@
     </div>
     <!-- 卡片身体的底部：认证成功的结构、认证未成功的结构 -->
     <el-descriptions
-      v-if="true"
+      v-if="userInfo.authStatus == 1"
       class="margin-top"
       :column="1"
       border
@@ -27,23 +27,23 @@
         <template #label>
           <div class="cell-item">用户姓名</div>
         </template>
-        kooriookami
+        {{ userInfo.name }}
       </el-descriptions-item>
       <el-descriptions-item label-align="center" :width="20">
         <template #label>
           <div class="cell-item">证件类型</div>
         </template>
-        kooriookami
+        {{ userInfo.certificatesType == "10" ? "身份证" : "户口本" }}
       </el-descriptions-item>
       <el-descriptions-item label-align="center" :width="20">
         <template #label>
           <div class="cell-item">证件号码</div>
         </template>
-        kooriookami
+        {{ userInfo.certificatesNo }}
       </el-descriptions-item>
     </el-descriptions>
     <!-- 用户未认证的结构 -->
-    <el-form style="width: 60%; margin: 20px auto" label-width="80">
+    <el-form v-else style="width: 60%; margin: 20px auto" label-width="80">
       <el-form-item label="用户姓名">
         <el-input placeholder="请输入用户的姓名"></el-input>
       </el-form-item>
@@ -78,7 +78,29 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import { InfoFilled } from "@element-plus/icons-vue";
+import type { UseringoResponseData } from "@/api/user/type";
+
+// 获取用户信息
+import { reqgetUserInfo } from "@/api/user";
+
+// 存储用户信息
+let userInfo = ref<any>({});
+
+// 组件挂载完毕
+onMounted(() => {
+  // 获取用户信息的方法
+  getUserInfo();
+});
+
+const getUserInfo = async () => {
+  let result: UseringoResponseData = await reqgetUserInfo();
+  // console.log(result);
+  if (result.code == 200) {
+    userInfo.value = result.data;
+  }
+};
 </script>
 
 <style scoped lang="scss">
