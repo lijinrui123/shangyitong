@@ -72,9 +72,19 @@
             {{ orderInfo.createTime }}
           </el-descriptions-item>
         </el-descriptions>
-        <div class="btn">
-          <el-button> 取消预约 </el-button>
-          <el-button type="primary"> 支付 </el-button>
+        <div
+          class="btn"
+          v-if="orderInfo.orderStatus == 0 || orderInfo.orderStatus == 1"
+        >
+          <el-popconfirm title="确定取消预约吗？" @confirm="cancel">
+            <template #reference>
+              <el-button> 取消预约 </el-button>
+            </template>
+          </el-popconfirm>
+
+          <el-button type="primary" v-if="orderInfo.orderStatus == 0">
+            支付
+          </el-button>
         </div>
       </div>
       <div class="right">
@@ -108,9 +118,10 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { reqOrderInfo } from "@/api/user";
+import { reqOrderInfo, reqCancelOreder } from "@/api/user";
 import { useRoute } from "vue-router";
 import type { OrderResponseData } from "@/api/user/type";
+import { ElMessage } from "element-plus";
 
 // 获取路由对象
 let $route = useRoute();
@@ -130,6 +141,21 @@ const getOrderInfo = async () => {
   // console.log(result);
   if (result.code == 200) {
     orderInfo.value = result.data;
+  }
+};
+
+// 取消订单  订单的状态有三种： -1 取消预约  0 预约但是没有支付  1支付成功
+const cancel = async () => {
+  try {
+    // 取消预约成功
+    await reqCancelOreder($route.query.orderId as string);
+    // 再次获取订单详情数据
+    getOrderInfo();
+  } catch (error) {
+    ElMessage({
+      type: "error",
+      message: "取消预约失败",
+    });
   }
 };
 </script>
