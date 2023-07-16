@@ -24,9 +24,15 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>实名认证</el-dropdown-item>
-              <el-dropdown-item>挂号订单</el-dropdown-item>
-              <el-dropdown-item>就诊人管理</el-dropdown-item>
+              <el-dropdown-item @click="goUser('/user/cetification')"
+                >实名认证</el-dropdown-item
+              >
+              <el-dropdown-item @click="goUser('/user/order')"
+                >挂号订单</el-dropdown-item
+              >
+              <el-dropdown-item @click="goUser('/user/patient')"
+                >就诊人管理</el-dropdown-item
+              >
               <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -38,13 +44,22 @@
 
 <script setup lang="ts">
 // 引入路由器
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 // 获取user仓库的数据visiable，可以控制login组件的对话框显示与隐藏
 import useUserStore from "@/store/modules/user";
 import { ArrowDown } from "@element-plus/icons-vue";
+
+// 获取路由器对象
+let $router = useRouter();
+// 获取路由对象
+let $route = useRoute();
+
+// 点击左侧菜单进行路由跳转
+const goUser = (path: string) => {
+  $router.push({ path: path });
+};
 let userStore = useUserStore();
 
-let $router = useRouter();
 const goHome = () => {
   // 编程式导航跳回到首页
   $router.push({ path: "/home" });

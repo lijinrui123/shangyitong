@@ -5,11 +5,13 @@ export default createRouter({
   history: createWebHistory(),
   // 管理路由
   routes: [
+    // 首页
     {
       path: "/home",
       //   路由懒加载模式
       component: () => import("@/pages/home/index.vue"),
     },
+    // 医院
     {
       path: "/hospital",
       component: () => import("@/pages/hospital/index.vue"),
@@ -46,6 +48,8 @@ export default createRouter({
         },
       ],
     },
+
+    // 微信扫码登录
     {
       path: "/wxlogin",
       component: () => import("@/pages/wxlogin/index.vue"),
@@ -54,6 +58,32 @@ export default createRouter({
       path: "/",
       //   路由重定向到home
       redirect: "/home",
+    },
+    {
+      path: "/user",
+      component: () => import("@/pages/user/index.vue"),
+      children: [
+        {
+          path: "cetification",
+          component: () => import("@/pages/user/cetification/index.vue"),
+        },
+        {
+          path: "order",
+          component: () => import("@/pages/user/order/index.vue"),
+        },
+        {
+          path: "patient",
+          component: () => import("@/pages/user/patient/index.vue"),
+        },
+        {
+          path: "profile",
+          component: () => import("@/pages/user/profile/index.vue"),
+        },
+        {
+          path: "feedback",
+          component: () => import("@/pages/user/feedback/index.vue"),
+        },
+      ],
     },
   ],
   // 滚动行为：控制滚动条的位置
