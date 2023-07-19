@@ -43,14 +43,24 @@
       </el-descriptions-item>
     </el-descriptions>
     <!-- 用户未认证的结构 -->
-    <el-form v-else style="width: 60%; margin: 20px auto" label-width="80">
-      <el-form-item label="用户姓名">
+    <!-- :model="params"  收集表单校验的数据 -->
+    <!-- props="name"  校验的字段 -->
+    <!--  :rule="rules" 表单校验规则 -->
+    <el-form
+      v-else
+      style="width: 60%; margin: 20px auto"
+      label-width="80"
+      :model="params"
+      :rules="rules"
+      ref="form"
+    >
+      <el-form-item label="用户姓名" prop="name">
         <el-input
           placeholder="请输入用户的姓名"
           v-model="params.name"
         ></el-input>
       </el-form-item>
-      <el-form-item label="证件类型">
+      <el-form-item label="证件类型" prop="certificatesType">
         <el-select
           placeholder="请选择证件类型"
           style="width: 100%"
@@ -64,13 +74,13 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="证件号码">
+      <el-form-item label="证件号码" prop="certificatesNo">
         <el-input
           placeholder="请输入证件号码"
           v-model="params.certificatesNo"
         ></el-input>
       </el-form-item>
-      <el-form-item label="上传证件">
+      <el-form-item label="上传证件" prop="certificatesUrl">
         <!-- action:upload组件像服务器提交图片路径
         limit：照片墙约束的图片个数
         on-exceed:超出约束的钩子
@@ -125,6 +135,8 @@ import type {
 import { reqgetUserInfo, reqCertainType, reqUserCertation } from "@/api/user";
 import { ElMessage } from "element-plus";
 
+// 获取form组件
+let form = ref();
 let upload = ref();
 
 // 存储用户信息
@@ -180,6 +192,8 @@ const exceedhandler = () => {
 
 // 图片上传成功
 const successhandler = (response: any) => {
+  // 如果图片上传成功，校验结果清除
+  form.value.clearValidate("certificatesUrl");
   // 收集上传成功图片的地址
   // response:上传图片请求服务器返回的数据
   // console.log(uploadFile);
@@ -216,6 +230,11 @@ const reset = () => {
 
 // 提交按钮的回调
 const submit = async () => {
+  //全部的表单校验通过返回一个成功的promise
+  //如果有一个表单校验失败返回的是一个失败的promise对象,后面的语句就不在执行了
+
+  // 所以表单通过校验才会执行try。。。。
+  await form.value.validate();
   try {
     // 认证成功
     await reqUserCertation(params);
@@ -232,6 +251,82 @@ const submit = async () => {
       message: "认证失败",
     });
   }
+};
+
+// 自定义校验姓名规则
+const validatorName = (rule: any, value: any, callBack: any) => {
+  // rule即为当前校验字段的校验规则对象   value即为当前校验字段的校验数据data
+  // console.log(rule);
+  // console.log(value);
+  const reg =
+    /^[\u00B7\u3007\u3400-\u4DBF\u4E00-\u9FFF\uE000-\uF8FF\uD840-\uD8C0\uDC00-\uDFFF\uF900-\uFAFF]+$/;
+  if (reg.test(value)) {
+    callBack();
+  } else {
+    callBack(new Error("请输入正确的中国人的名字"));
+  }
+};
+
+// 证件类型校验方法
+const validatorType = (rule: any, value: any, callBack: any) => {
+  // console.log(value);
+  if (value == "10" || value == "20") {
+    callBack();
+  } else {
+    callBack(new Error("请选择证件类型"));
+  }
+};
+
+// 身份证号码
+const validatorNo = (rule: any, value: any, callBack: any) => {
+  // console.log(111);
+
+  const reg =
+    /^([1-6][1-9]|50)\d{4}(18|19|20)\d{2}((0[1-9])|10|11|12)(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
+  const hkb = /^\d{9}$/;
+  if (reg.test(value) || hkb.test(value)) {
+    callBack();
+  } else {
+    callBack(new Error("请输入正确的身份证号码或者户口本号码"));
+  }
+};
+
+// 证件照图片
+const validatorUrl = (rule: any, value: any, callBack: any) => {
+  if (value.length) {
+    callBack();
+  } else {
+    callBack(new Error("请上传证件照"));
+  }
+};
+// 表单校验规则
+const rules = {
+  // 用户名字校验规则
+  //  required: true,代表当前字段务必进行校验
+  name: [
+    {
+      required: true,
+      validator: validatorName,
+    },
+  ],
+  certificatesType: [
+    {
+      required: true,
+      validator: validatorType,
+    },
+  ],
+  certificatesNo: [
+    {
+      required: true,
+      validator: validatorNo,
+    },
+  ],
+  certificatesUrl: [
+    {
+      required: true,
+      validator: validatorUrl,
+    },
+  ],
 };
 </script>
 
