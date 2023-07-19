@@ -7,6 +7,8 @@ import type {
   QrCode,
   PayReslt,
   UseringoResponseData,
+  CertationTypeResponseData,
+  UserParams,
 } from "./type";
 // 枚举地址
 enum API {
@@ -24,6 +26,11 @@ enum API {
 
   // 获取当前账号用户信息
   USERINFO_URL = "/user/auth/getUserInfo",
+
+  // 获取证件类型的接口
+  CERTIFICATIONTYPE_URL = "/cmn/dict/findByDictCode/",
+  // 用户认证的接口
+  USERCERTATION_URL = "/user/auth/userAuah",
 }
 
 // 提交订单
@@ -55,3 +62,13 @@ export const reqPayResult = (orderId: string) =>
 // 获取当前账号用户信息
 export const reqgetUserInfo = () =>
   request.get<any, UseringoResponseData>(API.USERINFO_URL);
+
+// 获取证件类型的方法
+export const reqCertainType = (CertificatesType = "CertificatesType") =>
+  request.get<any, CertationTypeResponseData>(
+    API.CERTIFICATIONTYPE_URL + CertificatesType
+  );
+
+// 用户认证
+export const reqUserCertation = (data: UserParams) =>
+  request.post<any, any>(API.USERCERTATION_URL, data);
