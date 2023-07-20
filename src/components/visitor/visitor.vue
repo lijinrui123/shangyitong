@@ -10,7 +10,7 @@
           circle
           type="primary"
           :icon="Edit"
-          @click="$emit('changeScene')"
+          @click="handler"
         ></el-button>
         <el-button
           v-if="$route.path == '/user/patient'"
@@ -39,15 +39,29 @@
 
 <script setup lang="ts">
 import { Edit, Delete } from "@element-plus/icons-vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 let $route = useRoute();
-
+let $router = useRouter();
 // 接受父组件传递过来的就诊人信息
-defineProps(["user", "index", "currentIndex"]);
-
+let props = defineProps(["user", "index", "currentIndex"]);
 
 // 子传父，defineEmits注册一个自定义事件，而后触发emit去调用该自定义事件，并传递参数给父组件。
 let $emit = defineEmits(["changeScene"]);
+
+// 相应就诊人组件修改按钮的回调
+const handler = () => {
+  // 要么是就诊人管理模块点击修改按钮
+  // 要么是预约挂号点击修改按钮
+  if ($route.path == "/user/patient") {
+    $emit("changeScene", props.user);
+  } else {
+    //  路由跳转携带参数
+    $router.push({
+      path: "/user/patient",
+      query: { type: "edit", id: props.user.id },
+    });
+  }
+};
 </script>
 
 <style scoped lang="scss">

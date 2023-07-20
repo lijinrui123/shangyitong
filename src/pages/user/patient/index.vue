@@ -147,7 +147,7 @@
 import { User } from "@element-plus/icons-vue";
 import { reqGetUser } from "@/api/hospital";
 import { reqCertainType, reqCity, reqAddOrUpdateUser } from "@/api/user";
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref, reactive, watch } from "vue";
 import type { UserResponseData, UserArr } from "@/api/hospital/type";
 import type {
   CertationTypeResponseData,
@@ -198,6 +198,9 @@ onMounted(() => {
   if ($route.query.type == "add") {
     scene.value = 1;
   }
+  if ($route.query.type == "edit") {
+    scene.value = 1;
+  }
 });
 
 // 获取全部就诊人信息
@@ -220,6 +223,7 @@ const addUser = () => {
 // 清空新增表单上一次的数据
 const reset = () => {
   Object.assign(UserParams, {
+    id: null,
     name: "",
     certificatesType: "",
     certificatesNo: "",
@@ -238,8 +242,11 @@ const reset = () => {
 };
 
 // 就诊人子组件自定义事件回调
-const changeScene = () => {
+const changeScene = (user: AddOrUpdateUser) => {
   scene.value = 1;
+  // console.log(user);
+  // 收集已有的就诊人信息
+  Object.assign(UserParams, user);
 };
 
 // 获取证件类型的接口
@@ -302,6 +309,19 @@ const submit = async () => {
     });
   }
 };
+
+// 监听全部就诊人的数据
+watch(
+  () => userArr.value,
+  () => {
+    if ($route.query.type == "edit") {
+      let user = userArr.value.find((item: any) => {
+        return item.id == $route.query.id;
+      });
+      Object.assign(UserParams, user);
+    }
+  }
+);
 </script>
 
 <style scoped lang="scss">
