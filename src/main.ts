@@ -18,11 +18,14 @@ import "element-plus/dist/index.css";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 // 引入pinia仓库
 import pinia from "@/store";
+import Visitor from "@/components/visitor/visitor.vue";
 // 利用createApp方法创建应用实例，且将应用实例挂载到挂载点上
 const app = createApp(App);
+// 注册为全局组件
 app.component("HospitalTop", HospitalTop);
 app.component("HospitalBottom", HospitalBottom);
 app.component("Login", Login);
+app.component("Visitor", Visitor);
 // 安装vue-router
 app.use(router);
 // 安装element-plus插件

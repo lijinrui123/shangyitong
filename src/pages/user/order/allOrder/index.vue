@@ -9,7 +9,7 @@
     <!-- 提供用户选择的下拉菜单 -->
     <el-form :inline="true">
       <el-form-item label="就诊人">
-        <!-- 修正拼写错误 -->
+
         <el-select
           placeholder="请选择就诊人"
           v-model="patientId"
@@ -26,8 +26,12 @@
       </el-form-item>
 
       <el-form-item label="订单状态">
-        <!-- 修正拼写错误 -->
-        <el-select placeholder="请选择所有订单状态" v-model="orderStatus" @change="changeOrderState">
+
+        <el-select
+          placeholder="请选择所有订单状态"
+          v-model="orderStatus"
+          @change="changeOrderState"
+        >
           <el-option label="全部订单" value=""></el-option>
           <el-option
             v-for="(item, index) in allOrderState"
@@ -143,7 +147,7 @@ const goDetail = (row: any) => {
 //   getOrderInfo();
 // };
 
-// 下拉菜单事件的回调
+// 分页器下拉菜单事件的回调
 const handlerSize = (pageSizes: number) => {
   pageSize.value = pageSizes;
   getOrderInfo();
@@ -169,10 +173,10 @@ const changeUser = () => {
 };
 
 // 订单状态下拉菜单回调方法
-const changeOrderState=()=>{
+const changeOrderState = () => {
   // 根据订单status
   getOrderInfo();
-}
+};
 </script>
 
 <style scoped lang="scss"></style>

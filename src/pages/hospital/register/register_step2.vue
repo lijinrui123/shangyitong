@@ -110,7 +110,7 @@ import type {
 } from "@/api/hospital/type";
 import { ElMessage } from "element-plus";
 // 就诊人组件
-import Visitor from "./visitor.vue";
+
 
 // 获取路由对象
 let $route = useRoute();

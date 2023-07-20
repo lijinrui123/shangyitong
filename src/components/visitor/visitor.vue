@@ -7,6 +7,12 @@
       </div>
       <div class="right">
         <el-button circle type="primary" :icon="Edit"></el-button>
+        <el-button
+          v-if="$route.path == '/user/patient'"
+          circle
+          type="danger"
+          :icon="Delete"
+        ></el-button>
       </div>
     </div>
     <div class="bottom">
@@ -27,7 +33,9 @@
 </template>
 
 <script setup lang="ts">
-import { Edit } from "@element-plus/icons-vue";
+import { Edit, Delete } from "@element-plus/icons-vue";
+import { useRoute } from "vue-router";
+let $route = useRoute();
 
 // 接受父组件传递过来的就诊人信息
 defineProps(["user", "index", "currentIndex"]);
