@@ -29,8 +29,12 @@
         </el-form-item>
         <el-form-item label="证件类型">
           <el-select placeholder="请你选择证件类型" style="width: 100%">
-            <el-option label="身份证"></el-option>
-            <el-option label="户口本"></el-option>
+            <el-option
+              v-for="item in certationArr"
+              :key="item.id"
+              :label="item.name"
+              :value="item.value"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="证件号码">
@@ -67,9 +71,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="当前住址">
-          <el-select placeholder="请选择用户地址">
-            <el-option v-for="item in 10" :label="item" />
-          </el-select>
+          <el-cascader :props="props" />
         </el-form-item>
         <el-form-item label="详细地址">
           <el-input placeholder="请输入用户详细地址"> </el-input>
@@ -82,8 +84,12 @@
         </el-form-item>
         <el-form-item label="证件类型">
           <el-select placeholder="请你选择证件类型" style="width: 100%">
-            <el-option label="身份证"></el-option>
-            <el-option label="户口本"></el-option>
+            <el-option
+              v-for="item in certationArr"
+              :key="item.id"
+              :label="item.name"
+              :value="item.value"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="证件号码">
@@ -104,8 +110,11 @@
 <script setup lang="ts">
 import { User } from "@element-plus/icons-vue";
 import { reqGetUser } from "@/api/hospital";
+import { reqCertainType, reqCity } from "@/api/user";
 import { onMounted, ref } from "vue";
 import type { UserResponseData, UserArr } from "@/api/hospital/type";
+import type { CertationTypeResponseData, CertationArr } from "@/api/user/type";
+import type { CascaderProps } from "element-plus";
 
 // 存储全部就诊人信息
 let userArr = ref<UserArr>([]);
@@ -113,10 +122,15 @@ let userArr = ref<UserArr>([]);
 // 定义一个响应式数据：决定卡片的身体部分展示的内容
 let scene = ref<number>(0);
 
+// 存储证件类型的数据
+let certationArr = ref<CertationArr>([]);
+
 // 组件挂载完毕获取一次就诊人信息
 onMounted(() => {
   // 获取就诊人信息
   getAllUse();
+  // 获取证件类型的数据
+  getCertationType();
 });
 
 // 获取全部就诊人信息
@@ -137,6 +151,39 @@ const addUser = () => {
 // 就诊人子组件自定义事件回调
 const changeScene = () => {
   scene.value = 1;
+};
+
+// 获取证件类型的接口
+const getCertationType = async () => {
+  let result: CertationTypeResponseData = await reqCertainType();
+  // console.log(result);
+  if (result.code == 200) {
+    certationArr.value = result.data;
+  }
+};
+
+// 级联选择题提供的数据
+const props: CascaderProps = {
+  lazy: true, //懒加载数据
+  // 加载级联选择器数据方法
+  async lazyLoad(node: any, resolve: any) {
+    let result: any = await reqCity(node.data.id || "86");
+    // console.log(result);
+    // 整理数据
+    let showData = result.data.map((item: any) => {
+      console.log(item);
+
+      return {
+        id: item.id,
+        label: item.name,
+        value: item.value,
+        leaf: !item.hasChildren,
+      };
+    });
+    // 注入组件需要展示的2数据
+    // 注入组件需要展示的数据
+    resolve(showData); // 这里将整理后的数据注入到级联选择器中
+  },
 };
 </script>
 

@@ -108,10 +108,12 @@ export const reqUserOrderInfo = (
 export const reqAllUser = () =>
   request.get<any, AllUserResponseData>(API.ALLUSER_URL);
 
-  
+
 //获取全部订单的接口
 export const reqOrderState = () =>
   request.get<any, AllOrderStateResponseData>(API.ORDERSTATE_URL);
+
+  
 //获取城市的数据
 export const reqCity = (parentId: string) =>
   request.get<any, any>(API.CITY_URL + parentId);
