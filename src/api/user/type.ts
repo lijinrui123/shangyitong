@@ -143,6 +143,8 @@ export interface Order {
   orderStatus: number;
 }
 export type Records = Order[];
+
+
 //获取订单接口数据的ts类型
 export interface UserOrderInfoResponseData extends ResponseData {
   data: {

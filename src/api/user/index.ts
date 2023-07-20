@@ -9,6 +9,10 @@ import type {
   UseringoResponseData,
   CertationTypeResponseData,
   UserParams,
+  AddOrUpdateUser,
+  AllOrderStateResponseData,
+  UserOrderInfoResponseData,
+  AllUserResponseData,
 } from "./type";
 // 枚举地址
 enum API {
@@ -31,6 +35,20 @@ enum API {
   CERTIFICATIONTYPE_URL = "/cmn/dict/findByDictCode/",
   // 用户认证的接口
   USERCERTATION_URL = "/user/auth/userAuah",
+  //获取用户订单号的数据
+  USERORDERINFO_URL = "/order/orderInfo/auth/",
+  //获取全部就诊人的信息
+  ALLUSER_URL = "/user/patient/auth/findAll",
+  //获取订单的状态
+  ORDERSTATE_URL = "/order/orderInfo/auth/getStatusList",
+  //获取城市的数据
+  CITY_URL = "/cmn/dict/findByParentId/",
+  //新增就诊人接口
+  ADDUSER_URL = "/user/patient/auth/save",
+  //更新已有的就诊人接口
+  UPDATEUSER_URL = "/user/patient/auth/update",
+  //删除已有的就诊人
+  DELETEUSER_URL = "/user/patient/auth/remove/",
 }
 
 // 提交订单
@@ -72,3 +90,37 @@ export const reqCertainType = (CertificatesType = "CertificatesType") =>
 // 用户认证
 export const reqUserCertation = (data: UserParams) =>
   request.post<any, any>(API.USERCERTATION_URL, data);
+
+//获取订单数据接口
+export const reqUserOrderInfo = (
+  page: number,
+  limit: number,
+  patientId: string,
+  orderStatus: string
+) =>
+  request.get<any, UserOrderInfoResponseData>(
+    API.USERORDERINFO_URL +
+      `${page}/${limit}?patientId=${patientId}&orderStatus=${orderStatus}`
+  );
+//获取全部就诊人的信息
+export const reqAllUser = () =>
+  request.get<any, AllUserResponseData>(API.ALLUSER_URL);
+//获取全部订单的接口
+export const reqOrderState = () =>
+  request.get<any, AllOrderStateResponseData>(API.ORDERSTATE_URL);
+//获取城市的数据
+export const reqCity = (parentId: string) =>
+  request.get<any, any>(API.CITY_URL + parentId);
+
+//新增与修改已有的就诊人接口方法
+export const reqAddOrUpdateUser = (data: AddOrUpdateUser) => {
+  if (data.id) {
+    return request.put<any, any>(API.UPDATEUSER_URL, data);
+  } else {
+    return request.post<any, any>(API.ADDUSER_URL, data);
+  }
+};
+
+//删除某一个就诊人的信息
+export const reqRemoveUser = (id: number) =>
+  request.delete<any, any>(API.DELETEUSER_URL + id);
