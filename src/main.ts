@@ -19,6 +19,7 @@ import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 // 引入pinia仓库
 import pinia from "@/store";
 import Visitor from "@/components/visitor/visitor.vue";
+
 // 利用createApp方法创建应用实例，且将应用实例挂载到挂载点上
 const app = createApp(App);
 // 注册为全局组件
@@ -34,5 +35,7 @@ app.use(ElementPlus, {
 });
 // pinia的安装
 app.use(pinia);
+// 引入路由鉴权的文件
+import "./permisstion";
 // 挂载
 app.mount("#app");

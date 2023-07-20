@@ -182,11 +182,16 @@ import { User, Lock } from "@element-plus/icons-vue";
 // 获取user仓库的数据visiable，可以控制login组件的对话框显示与隐藏
 // import useUserStore from '@/store/mod'
 import useUserStore from "@/store/modules/user";
-import { ref, reactive, computed, watch } from "vue";
+import { ref, reactive, computed, watch, pushScopeId } from "vue";
 // 引入倒计时组件
 import CountDown from "../countdown/index.vue";
 import type { WXLoginResponseData } from "@/api/hospital/type";
 import { ElMessage } from "element-plus";
+import { useRoute, useRouter } from "vue-router";
+
+// 获取路由对象
+let $route = useRoute();
+let $router = useRouter();
 // 定义一个响应式数据控制倒计时组件显示与隐藏
 let flag = ref<boolean>(false); //flag如果为真，开启倒计时，反之不是
 let userStore = useUserStore();
@@ -276,6 +281,13 @@ const login = async () => {
     await userStore.userLogin(loginParam);
     // 关闭对话框
     userStore.visiable = false;
+    // 获取url的query参数
+    let redirect = $route.query.redirect;
+    if (redirect) {
+      $router.push(redirect as string);
+    } else {
+      $router.push("/home");
+    }
   } catch (error) {
     // 登录失败，弹出错误信息
     ElMessage({
