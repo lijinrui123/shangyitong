@@ -7,7 +7,12 @@
       <template #header>
         <div class="card-header">
           <span>请选择就诊人</span>
-          <el-button class="button" type="primary" size="default" :icon="User"
+          <el-button
+            class="button"
+            type="primary"
+            size="default"
+            :icon="User"
+            @click="goUser"
             >添加就诊人</el-button
           >
         </div>
@@ -111,7 +116,6 @@ import type {
 import { ElMessage } from "element-plus";
 // 就诊人组件
 
-
 // 获取路由对象
 let $route = useRoute();
 // 获取路由器对象
@@ -183,6 +187,12 @@ const submitOrder = async () => {
       message: result.message,
     });
   }
+};
+
+// 预约挂号添加就诊人按钮的方法
+const goUser = () => {
+  // 路由跳转
+  $router.push({ path: "/user/patient" ,query:{type:'add'}});
 };
 </script>
 
