@@ -6,7 +6,12 @@
         <span class="username">{{ user.name }}</span>
       </div>
       <div class="right">
-        <el-button circle type="primary" :icon="Edit"></el-button>
+        <el-button
+          circle
+          type="primary"
+          :icon="Edit"
+          @click="$emit('changeScene')"
+        ></el-button>
         <el-button
           v-if="$route.path == '/user/patient'"
           circle
@@ -39,6 +44,10 @@ let $route = useRoute();
 
 // 接受父组件传递过来的就诊人信息
 defineProps(["user", "index", "currentIndex"]);
+
+
+// 子传父，defineEmits注册一个自定义事件，而后触发emit去调用该自定义事件，并传递参数给父组件。
+let $emit = defineEmits(["changeScene"]);
 </script>
 
 <style scoped lang="scss">
