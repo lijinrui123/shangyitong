@@ -102,9 +102,13 @@ export const reqUserOrderInfo = (
     API.USERORDERINFO_URL +
       `${page}/${limit}?patientId=${patientId}&orderStatus=${orderStatus}`
   );
+
+
 //获取全部就诊人的信息
 export const reqAllUser = () =>
   request.get<any, AllUserResponseData>(API.ALLUSER_URL);
+
+  
 //获取全部订单的接口
 export const reqOrderState = () =>
   request.get<any, AllOrderStateResponseData>(API.ORDERSTATE_URL);

@@ -10,19 +10,31 @@
     <el-form :inline="true">
       <el-form-item label="就诊人">
         <!-- 修正拼写错误 -->
-        <el-select placeholder="请选择就诊人">
-          <el-option label="网易云"></el-option>
-          <el-option label="网易云"></el-option>
-          <el-option label="网易云"></el-option>
+        <el-select
+          placeholder="请选择就诊人"
+          v-model="patientId"
+          @change="changeUser"
+        >
+          <el-option label="请选择全部的就诊人" value=""></el-option>
+          <el-option
+            v-for="item in allUser"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
 
       <el-form-item label="订单状态">
         <!-- 修正拼写错误 -->
-        <el-select placeholder="请选择所有订单状态">
-          <el-option label="网易云"></el-option>
-          <el-option label="网易云"></el-option>
-          <el-option label="网易云"></el-option>
+        <el-select placeholder="请选择所有订单状态" v-model="orderStatus" @change="changeOrderState">
+          <el-option label="全部订单" value=""></el-option>
+          <el-option
+            v-for="(item, index) in allOrderState"
+            :key="index"
+            :label="item.comment"
+            :value="item.status"
+          ></el-option>
         </el-select>
       </el-form-item>
     </el-form>
@@ -54,7 +66,7 @@
       :background="true"
       layout=" prev, pager, next, jumper,->,total, sizes"
       :total="total"
-      @current-change="handler"
+      @current-change="getOrderInfo"
       @size-change="handlerSize"
     />
   </el-card>
@@ -64,8 +76,15 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 // 引入获取订单的请求方法
-import { reqUserOrderInfo } from "@/api/user";
-import type { UserOrderInfoResponseData, Records } from "@/api/user/type";
+import { reqUserOrderInfo, reqAllUser, reqOrderState } from "@/api/user";
+import type {
+  UserOrderInfoResponseData,
+  Records,
+  AllUser,
+  AllUserResponseData,
+  AllOrderState,
+  AllOrderStateResponseData,
+} from "@/api/user/type";
 
 // 获取路由器对象
 let $router = useRouter();
@@ -83,14 +102,23 @@ let allOderArr = ref<Records>([]);
 // 存储订单总个数
 let total = ref<number>(0);
 
+// 存储全部就诊人信息
+let allUser = ref<AllUser>([]);
+
+let allOrderState = ref<AllOrderState>([]);
+
 // 组件挂在完毕的回调
 onMounted(() => [
   // 获取订单的方法
   getOrderInfo(),
+
+  // 获取全部就诊人信息和全部订单状态
+  getData(),
 ]);
 
-// c获取订单的2方法
-const getOrderInfo = async () => {
+// 获取订单的方法
+const getOrderInfo = async (pager: number = 1) => {
+  pageNo.value = pager;
   let result: UserOrderInfoResponseData = await reqUserOrderInfo(
     pageNo.value,
     pageSize.value,
@@ -109,17 +137,42 @@ const goDetail = (row: any) => {
   $router.push({ path: "/user/order", query: { orderId: row.id } });
 };
 
-// 分页器组件当前页码的时间回调
-const handler = (pager: number) => {
-  pageNo.value = pager;
-  getOrderInfo();
-};
+// // 分页器组件当前页码的时间回调
+// const handler = (pager: number) => {
+//   pageNo.value = pager;
+//   getOrderInfo();
+// };
 
 // 下拉菜单事件的回调
 const handlerSize = (pageSizes: number) => {
   pageSize.value = pageSizes;
   getOrderInfo();
 };
+
+// 获取就诊人与订单状态接口方法
+const getData = async () => {
+  // 获取全部就诊人信息
+  let result: AllUserResponseData = await reqAllUser();
+  // 获取全部订单状态
+  let result1: AllOrderStateResponseData = await reqOrderState();
+  // console.log(result);
+
+  allUser.value = result.data;
+  allOrderState.value = result1.data;
+};
+
+// 就诊人下拉菜单回调方法
+const changeUser = () => {
+  // console.log(111);
+  // 根据就诊人ID再次获取挂号订单数据
+  getOrderInfo();
+};
+
+// 订单状态下拉菜单回调方法
+const changeOrderState=()=>{
+  // 根据订单status
+  getOrderInfo();
+}
 </script>
 
 <style scoped lang="scss"></style>
