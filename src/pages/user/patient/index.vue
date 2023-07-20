@@ -13,6 +13,7 @@
     <div class="visitors" v-if="scene == 0">
       <Visitor
         @changeScene="changeScene"
+        @removeUser="removeUser"
         class="item"
         v-for="(user, index) in userArr"
         :key="user.id"
@@ -322,6 +323,12 @@ watch(
     }
   }
 );
+
+// 子组件自定义事件：删除按钮触发
+const removeUser = () => {
+  // 删除完后再次获取全部就诊人信息
+  getAllUse();
+};
 </script>
 
 <style scoped lang="scss">

@@ -12,12 +12,21 @@
           :icon="Edit"
           @click="handler"
         ></el-button>
-        <el-button
-          v-if="$route.path == '/user/patient'"
-          circle
-          type="danger"
-          :icon="Delete"
-        ></el-button>
+
+        <el-popconfirm
+          :title="`是否确认删除${user.name}`"
+          width="200px"
+          @confirm="removeUser"
+        >
+          <template #reference>
+            <el-button
+              v-if="$route.path == '/user/patient'"
+              circle
+              type="danger"
+              :icon="Delete"
+            ></el-button>
+          </template>
+        </el-popconfirm>
       </div>
     </div>
     <div class="bottom">
@@ -40,13 +49,15 @@
 <script setup lang="ts">
 import { Edit, Delete } from "@element-plus/icons-vue";
 import { useRoute, useRouter } from "vue-router";
+import { reqRemoveUser } from "@/api/user";
+import { ElMessage } from "element-plus";
 let $route = useRoute();
 let $router = useRouter();
 // 接受父组件传递过来的就诊人信息
 let props = defineProps(["user", "index", "currentIndex"]);
 
 // 子传父，defineEmits注册一个自定义事件，而后触发emit去调用该自定义事件，并传递参数给父组件。
-let $emit = defineEmits(["changeScene"]);
+let $emit = defineEmits(["changeScene", "removeUser"]);
 
 // 相应就诊人组件修改按钮的回调
 const handler = () => {
@@ -59,6 +70,23 @@ const handler = () => {
     $router.push({
       path: "/user/patient",
       query: { type: "edit", id: props.user.id },
+    });
+  }
+};
+
+// 删除某一个用户
+const removeUser = async () => {
+  try {
+    await reqRemoveUser(props.user.id);
+    ElMessage({
+      type: "success",
+      message: "删除成功",
+    });
+    $emit("removeUser");
+  } catch (error) {
+    ElMessage({
+      type: "error",
+      message: "删除失败",
     });
   }
 };
